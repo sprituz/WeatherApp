@@ -9,13 +9,14 @@
 /* Begin PBXBuildFile section */
 		9B9311582979466F0015F84E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B9311572979466F0015F84E /* AppDelegate.swift */; };
 		9B93115A2979466F0015F84E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B9311592979466F0015F84E /* SceneDelegate.swift */; };
-		9B93115C2979466F0015F84E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B93115B2979466F0015F84E /* ViewController.swift */; };
-		9B93115F2979466F0015F84E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9B93115D2979466F0015F84E /* Main.storyboard */; };
+		9B93115C2979466F0015F84E /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B93115B2979466F0015F84E /* HomeViewController.swift */; };
 		9B931161297946700015F84E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9B931160297946700015F84E /* Assets.xcassets */; };
 		9B931164297946700015F84E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9B931162297946700015F84E /* LaunchScreen.storyboard */; };
 		9B93116F297946700015F84E /* WeatherAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B93116E297946700015F84E /* WeatherAppTests.swift */; };
 		9B931179297946700015F84E /* WeatherAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B931178297946700015F84E /* WeatherAppUITests.swift */; };
 		9B93117B297946700015F84E /* WeatherAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B93117A297946700015F84E /* WeatherAppUITestsLaunchTests.swift */; };
+		9B93119029794DA30015F84E /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 9B93118F29794DA30015F84E /* RxCocoa */; };
+		9B93119229794DA30015F84E /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9B93119129794DA30015F84E /* RxSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,8 +40,7 @@
 		9B9311542979466F0015F84E /* WeatherApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B9311572979466F0015F84E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9B9311592979466F0015F84E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		9B93115B2979466F0015F84E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		9B93115E2979466F0015F84E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		9B93115B2979466F0015F84E /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		9B931160297946700015F84E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9B931163297946700015F84E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9B931165297946700015F84E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -56,6 +56,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B93119229794DA30015F84E /* RxSwift in Frameworks */,
+				9B93119029794DA30015F84E /* RxCocoa in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,12 +101,14 @@
 		9B9311562979466F0015F84E /* WeatherApp */ = {
 			isa = PBXGroup;
 			children = (
+				9B93118B29794ABB0015F84E /* Model */,
+				9B93118A29794AB10015F84E /* ViewModel */,
+				9B93118929794AA50015F84E /* ViewController */,
+				9B93118829794A750015F84E /* Service */,
+				9B93118729794A6E0015F84E /* Scene */,
 				9B9311572979466F0015F84E /* AppDelegate.swift */,
 				9B9311592979466F0015F84E /* SceneDelegate.swift */,
-				9B93115B2979466F0015F84E /* ViewController.swift */,
-				9B93115D2979466F0015F84E /* Main.storyboard */,
 				9B931160297946700015F84E /* Assets.xcassets */,
-				9B931162297946700015F84E /* LaunchScreen.storyboard */,
 				9B931165297946700015F84E /* Info.plist */,
 			);
 			path = WeatherApp;
@@ -127,6 +131,43 @@
 			path = WeatherAppUITests;
 			sourceTree = "<group>";
 		};
+		9B93118729794A6E0015F84E /* Scene */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Scene;
+			sourceTree = "<group>";
+		};
+		9B93118829794A750015F84E /* Service */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		9B93118929794AA50015F84E /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				9B931162297946700015F84E /* LaunchScreen.storyboard */,
+				9B93115B2979466F0015F84E /* HomeViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		9B93118A29794AB10015F84E /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		9B93118B29794ABB0015F84E /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -143,6 +184,10 @@
 			dependencies = (
 			);
 			name = WeatherApp;
+			packageProductDependencies = (
+				9B93118F29794DA30015F84E /* RxCocoa */,
+				9B93119129794DA30015F84E /* RxSwift */,
+			);
 			productName = WeatherApp;
 			productReference = 9B9311542979466F0015F84E /* WeatherApp.app */;
 			productType = "com.apple.product-type.application";
@@ -215,6 +260,9 @@
 				Base,
 			);
 			mainGroup = 9B93114B2979466F0015F84E;
+			packageReferences = (
+				9B93118E29794DA30015F84E /* XCRemoteSwiftPackageReference "RxSwift" */,
+			);
 			productRefGroup = 9B9311552979466F0015F84E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -233,7 +281,6 @@
 			files = (
 				9B931164297946700015F84E /* LaunchScreen.storyboard in Resources */,
 				9B931161297946700015F84E /* Assets.xcassets in Resources */,
-				9B93115F2979466F0015F84E /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,7 +305,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9B93115C2979466F0015F84E /* ViewController.swift in Sources */,
+				9B93115C2979466F0015F84E /* HomeViewController.swift in Sources */,
 				9B9311582979466F0015F84E /* AppDelegate.swift in Sources */,
 				9B93115A2979466F0015F84E /* SceneDelegate.swift in Sources */,
 			);
@@ -297,14 +344,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		9B93115D2979466F0015F84E /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9B93115E2979466F0015F84E /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		9B931162297946700015F84E /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -602,6 +641,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9B93118E29794DA30015F84E /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9B93118F29794DA30015F84E /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9B93118E29794DA30015F84E /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		9B93119129794DA30015F84E /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9B93118E29794DA30015F84E /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9B93114C2979466F0015F84E /* Project object */;
 }
