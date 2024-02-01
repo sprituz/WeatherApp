@@ -37,6 +37,30 @@ class HomeViewController: UIViewController {
         return label
     }()
     
+    private lazy var maxTemparatureLabel: UILabel = {
+        let label = UILabel()
+        label.text = "최고 온도"
+        label.textColor = .black
+        label.font = UIFont.systemFont(ofSize: 20)
+        return label
+    }()
+    
+    private lazy var minTemparatureLabel: UILabel = {
+        let label = UILabel()
+        label.text = "최저 온도"
+        label.textColor = .black
+        label.font = UIFont.systemFont(ofSize: 20)
+        return label
+    }()
+    
+    private lazy var humidityLabel: UILabel = {
+        let label = UILabel()
+        label.text = "습도"
+        label.textColor = .black
+        label.font = UIFont.systemFont(ofSize: 20)
+        return label
+    }()
+    
     
     private var viewModel:HomeViewModel!
     private let disposeBag = DisposeBag()
@@ -56,20 +80,38 @@ class HomeViewController: UIViewController {
         view.addSubview(cityLabel)
         view.addSubview(weatherDescriptionLabel)
         view.addSubview(temperatureLabel)
-        
-        weatherDescriptionLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(cityLabel.snp.bottom).offset(20)
-        }
-        
-        temperatureLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(weatherDescriptionLabel.snp.bottom).offset(20)
-        }
+        view.addSubview(maxTemparatureLabel)
+        view.addSubview(minTemparatureLabel)
+        view.addSubview(humidityLabel)
         
         cityLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(200)
+        }
+        
+        weatherDescriptionLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(cityLabel.snp.bottom).offset(10)
+        }
+        
+        temperatureLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(weatherDescriptionLabel.snp.bottom).offset(10)
+        }
+        
+        maxTemparatureLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(temperatureLabel.snp.bottom).offset(10)
+        }
+        
+        minTemparatureLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(maxTemparatureLabel.snp.bottom).offset(10)
+        }
+        
+        humidityLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(minTemparatureLabel.snp.bottom).offset(10)
         }
     }
     
@@ -86,6 +128,9 @@ class HomeViewController: UIViewController {
             }
             
             self?.temperatureLabel.text = String(format:"%.2f",weatherResponse.main.temp) + "℃"
+            self?.maxTemparatureLabel.text = "최고온도: "+String(format:"%.2f",weatherResponse.main.tempMax) + "℃"
+            self?.minTemparatureLabel.text = "최저온도: "+String(format:"%.2f",weatherResponse.main.tempMin) + "℃"
+            self?.humidityLabel.text = "습도: "+String(format:"%.2f",weatherResponse.main.humidity) + "%"
             
         }).disposed(by: disposeBag)
     }
