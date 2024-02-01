@@ -120,13 +120,12 @@
 			isa = PBXGroup;
 			children = (
 				9B9311A3297A8DF10015F84E /* Resources */,
-				9B93119E297A8D710015F84E /* Core */,
+				9B93119E297A8D710015F84E /* App */,
 				9B93119D297A8CC00015F84E /* Utils */,
-				9B93118729794A6E0015F84E /* Scene */,
-				9B93118829794A750015F84E /* Service */,
-				9B93118B29794ABB0015F84E /* Model */,
-				9B93118A29794AB10015F84E /* ViewModel */,
-				9B93118929794AA50015F84E /* ViewController */,
+				9B93118829794A750015F84E /* Services */,
+				9B93118B29794ABB0015F84E /* Models */,
+				9B93118A29794AB10015F84E /* ViewModels */,
+				9B93118929794AA50015F84E /* ViewControllers */,
 				9B931165297946700015F84E /* Info.plist */,
 				9B9311AA2981244F0015F84E /* WeatherInfo.plist */,
 				9B9311AC298124EA0015F84E /* WeatherApp++Bundle.swift */,
@@ -151,45 +150,38 @@
 			path = WeatherAppUITests;
 			sourceTree = "<group>";
 		};
-		9B93118729794A6E0015F84E /* Scene */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Scene;
-			sourceTree = "<group>";
-		};
-		9B93118829794A750015F84E /* Service */ = {
+		9B93118829794A750015F84E /* Services */ = {
 			isa = PBXGroup;
 			children = (
 				9B93119F297A8D9A0015F84E /* APIService.swift */,
 				9B9311B42987A15C0015F84E /* LocationService.swift */,
 			);
-			path = Service;
+			path = Services;
 			sourceTree = "<group>";
 		};
-		9B93118929794AA50015F84E /* ViewController */ = {
+		9B93118929794AA50015F84E /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
 				9B93115B2979466F0015F84E /* HomeViewController.swift */,
 				9BA458932B6B18E100F8965C /* SearchViewController.swift */,
 			);
-			path = ViewController;
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
-		9B93118A29794AB10015F84E /* ViewModel */ = {
+		9B93118A29794AB10015F84E /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
 				9B93119329794ED80015F84E /* HomeViewModel.swift */,
 			);
-			path = ViewModel;
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		9B93118B29794ABB0015F84E /* Model */ = {
+		9B93118B29794ABB0015F84E /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				9B9311A9297C51040015F84E /* Response */,
 			);
-			path = Model;
+			path = Models;
 			sourceTree = "<group>";
 		};
 		9B93119D297A8CC00015F84E /* Utils */ = {
@@ -199,13 +191,13 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
-		9B93119E297A8D710015F84E /* Core */ = {
+		9B93119E297A8D710015F84E /* App */ = {
 			isa = PBXGroup;
 			children = (
 				9B9311592979466F0015F84E /* SceneDelegate.swift */,
 				9B9311572979466F0015F84E /* AppDelegate.swift */,
 			);
-			path = Core;
+			path = App;
 			sourceTree = "<group>";
 		};
 		9B9311A3297A8DF10015F84E /* Resources */ = {
@@ -547,6 +539,8 @@
 				DEVELOPMENT_TEAM = NN86XHW782;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherApp/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "우리는 백그라운드에서도 날씨 업데이트를 제공하기 위해 당신의 현재 위치정보가 필요합니다.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "우리는 날씨 정보를 제공하기 위해 당신의 현재 위치정보가 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -556,7 +550,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = kr.dayeon.WeatherApp;
+				PRODUCT_BUNDLE_IDENTIFIER = kr.co.dayeon.WeatherApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -574,6 +568,8 @@
 				DEVELOPMENT_TEAM = NN86XHW782;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherApp/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "우리는 백그라운드에서도 날씨 업데이트를 제공하기 위해 당신의 현재 위치정보가 필요합니다.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "우리는 날씨 정보를 제공하기 위해 당신의 현재 위치정보가 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -583,7 +579,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = kr.dayeon.WeatherApp;
+				PRODUCT_BUNDLE_IDENTIFIER = kr.co.dayeon.WeatherApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
