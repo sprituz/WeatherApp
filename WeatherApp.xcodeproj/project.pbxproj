@@ -22,6 +22,10 @@
 		9B9311A0297A8D9A0015F84E /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B93119F297A8D9A0015F84E /* APIService.swift */; };
 		9B9311A6297C17B00015F84E /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 9B9311A5297C17B00015F84E /* Alamofire */; };
 		9B9311A8297C50FF0015F84E /* WeatherResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B9311A7297C50FF0015F84E /* WeatherResponse.swift */; };
+		9B9311AB2981244F0015F84E /* WeatherInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9B9311AA2981244F0015F84E /* WeatherInfo.plist */; };
+		9B9311AD298124EA0015F84E /* WeatherApp++Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B9311AC298124EA0015F84E /* WeatherApp++Bundle.swift */; };
+		9B9311B52987A15C0015F84E /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B9311B42987A15C0015F84E /* LocationService.swift */; };
+		9BA458942B6B18E100F8965C /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BA458932B6B18E100F8965C /* SearchViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +61,10 @@
 		9B93119329794ED80015F84E /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		9B93119F297A8D9A0015F84E /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		9B9311A7297C50FF0015F84E /* WeatherResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherResponse.swift; sourceTree = "<group>"; };
+		9B9311AA2981244F0015F84E /* WeatherInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = WeatherInfo.plist; sourceTree = "<group>"; };
+		9B9311AC298124EA0015F84E /* WeatherApp++Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WeatherApp++Bundle.swift"; sourceTree = "<group>"; };
+		9B9311B42987A15C0015F84E /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		9BA458932B6B18E100F8965C /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +128,8 @@
 				9B93118A29794AB10015F84E /* ViewModel */,
 				9B93118929794AA50015F84E /* ViewController */,
 				9B931165297946700015F84E /* Info.plist */,
+				9B9311AA2981244F0015F84E /* WeatherInfo.plist */,
+				9B9311AC298124EA0015F84E /* WeatherApp++Bundle.swift */,
 			);
 			path = WeatherApp;
 			sourceTree = "<group>";
@@ -152,6 +162,7 @@
 			isa = PBXGroup;
 			children = (
 				9B93119F297A8D9A0015F84E /* APIService.swift */,
+				9B9311B42987A15C0015F84E /* LocationService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -160,6 +171,7 @@
 			isa = PBXGroup;
 			children = (
 				9B93115B2979466F0015F84E /* HomeViewController.swift */,
+				9BA458932B6B18E100F8965C /* SearchViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -330,6 +342,7 @@
 			files = (
 				9B931164297946700015F84E /* LaunchScreen.storyboard in Resources */,
 				9B931161297946700015F84E /* Assets.xcassets in Resources */,
+				9B9311AB2981244F0015F84E /* WeatherInfo.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -355,6 +368,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				9B93115C2979466F0015F84E /* HomeViewController.swift in Sources */,
+				9B9311AD298124EA0015F84E /* WeatherApp++Bundle.swift in Sources */,
+				9B9311B52987A15C0015F84E /* LocationService.swift in Sources */,
+				9BA458942B6B18E100F8965C /* SearchViewController.swift in Sources */,
 				9B9311A8297C50FF0015F84E /* WeatherResponse.swift in Sources */,
 				9B9311A0297A8D9A0015F84E /* APIService.swift in Sources */,
 				9B9311582979466F0015F84E /* AppDelegate.swift in Sources */,
