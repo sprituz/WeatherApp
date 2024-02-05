@@ -68,19 +68,20 @@ class APIService {
     
     func getWeather(lat: Double, lon: Double) -> Observable<WeatherResponse> {
         guard let url = WeatherServiceEndpoint.byCoordinates(lat, lon).url(appid: self.appid) else {
-            return Observable.error(NetworkError.invalidURL)
+            return Observable.error(NetworkError.outOfBounds)
         }
         return performRequest(url: url)
     }
     
     func getWeather(city: String) -> Observable<WeatherResponse> {
         guard let url = WeatherServiceEndpoint.byCityName(city).url(appid: self.appid) else {
-            return Observable.error(NetworkError.invalidURL)
+            return Observable.error(NetworkError.cityNotFound)
         }
         return performRequest(url: url)
     }
     
     enum NetworkError: Error {
-        case invalidURL
+        case outOfBounds
+        case cityNotFound
     }
 }
