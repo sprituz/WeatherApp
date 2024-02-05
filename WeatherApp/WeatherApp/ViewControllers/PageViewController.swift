@@ -29,7 +29,8 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
         delegate = self
         
         // 페이지 뷰 컨트롤러를 생성하고 배열에 추가합니다.
-        let page1 = HomeViewController()
+        let page1 = WeatherViewController()
+        page1.location = "current location"
         let page2 = SearchViewController()
         pages.append(page1)
         pages.append(page2)

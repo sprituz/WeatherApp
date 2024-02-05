@@ -11,7 +11,7 @@ import RxCocoa
 import SnapKit
 
 
-class HomeViewController: UIViewController {
+class WeatherViewController: UIViewController {
     
     private lazy var cityLabel: UILabel = {
         let label = UILabel()
@@ -61,8 +61,10 @@ class HomeViewController: UIViewController {
         return label
     }()
     
+    var location: String = ""
     
-    private var viewModel:HomeViewModel!
+    private var viewModel:WeatherViewModel!
+    
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
@@ -70,7 +72,7 @@ class HomeViewController: UIViewController {
         // Do any additional setup after loading the view.
         configureUI()
         //let a: Observable<WeatherResponse> = apiService.getWeather(lat: 37.5666805, lon: 126.9784147)
-        viewModel = HomeViewModel()
+        viewModel = WeatherViewModel()
         bind()
     }
     
@@ -117,7 +119,9 @@ class HomeViewController: UIViewController {
     
     private func bind() {
         
-        let output = viewModel.transform()
+        let input = WeatherViewModel.Input(location: Observable.just(location))
+        
+        let output = viewModel.transform(input: input)
         
         output.data.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] weatherResponse in
             

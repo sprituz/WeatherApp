@@ -9,20 +9,20 @@ import Foundation
 import RxSwift
 import CoreLocation
 
-final class HomeViewModel {
+final class WeatherViewModel {
     
     private let apiService = APIService.shared
     private let locationManager = LocationService.shared
     
-    struct input {
-        
+    struct Input {
+        let location: Observable<String>
     }
     
-    struct output {
+    struct Output {
         let data: Observable<WeatherResponse>
     }
     
-    func transform() -> output {
+    func transform(input: Input) -> Output {
         let data = locationManager.location
             .flatMapLatest { [weak self] location -> Observable<WeatherResponse> in
                 guard let self = self else { return Observable.empty() }
@@ -31,8 +31,6 @@ final class HomeViewModel {
                 return self.apiService.getWeather(lat: location.coordinate.latitude, lon: location.coordinate.longitude)
             }
 
-        return output(data: data)
-    }
-
-    
+        return Output(data: data)
+    }    
 }
