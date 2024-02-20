@@ -6,50 +6,95 @@
 //
 
 import UIKit
+import RxSwift
 
-class PageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+final class PageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
-    weak var coordinator: MainCoordinator?
     var pages: [UIViewController] = []
     var pageControl = UIPageControl()
-
-    init(coordinator: MainCoordinator) {
-        self.coordinator = coordinator
+    
+    private lazy var mapButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        if let image = UIImage(systemName: "map") {
+            button.setImage(image, for: .normal)
+        }
+        button.tintColor = .white
+        button.backgroundColor = .clear
+        return button
+    }()
+    
+    private lazy var searchButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        if let image = UIImage(systemName: "list.bullet") {
+            button.setImage(image, for: .normal)
+        }
+        button.tintColor = .white
+        button.backgroundColor = .clear
+        return button
+    }()
+    
+    private let disposeBag = DisposeBag()
+    
+    init() {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         dataSource = self
         delegate = self
         
-        // 페이지 뷰 컨트롤러를 생성하고 배열에 추가합니다.
         let page1 = WeatherViewController()
-        page1.location = "current location"
-        let page2 = SearchViewController()
+        page1.location = Coord(lon: nil, lat: nil)
         pages.append(page1)
-        pages.append(page2)
-
+        
+        
         if let firstPage = pages.first {
             setViewControllers([firstPage], direction: .forward, animated: true, completion: nil)
         }
         
         configurePageControl()
+        
     }
-
+    
+    
     func configurePageControl() {
         pageControl.frame = CGRect(x: 0, y: UIScreen.main.bounds.maxY - 100, width: UIScreen.main.bounds.width, height: 50)
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
+        let image = UIImage(systemName: "location.fill")
+        pageControl.setIndicatorImage(image, forPage: 0)
         view.addSubview(pageControl)
         view.bringSubviewToFront(pageControl)
+        
+        pageControl.addSubview(mapButton)
+        pageControl.addSubview(searchButton)
+        
+        mapButton.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(40)
+            make.centerY.equalToSuperview()
+        }
+        
+        searchButton.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(40)
+            make.centerY.equalToSuperview()
+        }
+        
+        searchButton.rx.tap
+            .subscribe(onNext: { [weak self] _ in
+                let searchVC = SearchViewController()
+                self?.navigationController?.pushViewController(searchVC, animated: true)
+            })
+            .disposed(by: disposeBag)
     }
-
+    
+    
+    
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let index = pages.firstIndex(of: viewController) else { return nil }
         let previousIndex = index - 1
@@ -69,5 +114,6 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
         pageControl.currentPage = nextIndex
         return pages[nextIndex]
     }
+    
 }
 

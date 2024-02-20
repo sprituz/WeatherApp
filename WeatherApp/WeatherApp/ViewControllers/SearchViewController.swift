@@ -7,34 +7,87 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
-class SearchViewController: UIViewController/*, UISearchBarDelegate, UISearchResultsUpdating*/ {
-//    func updateSearchResults(for searchController: UISearchController) {
-//        <#code#>
-//    }
-//    
+class SearchViewController: UIViewController {
     
-    private let searchBar = UISearchBar()
+    var text: String = ""
+    
+    lazy var tableView: UITableView = {
+        let view = UITableView()
+        view.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        view.keyboardDismissMode = .onDrag
+        view.backgroundColor = .white
+        return view
+    }()
+    
+    private var viewModel:SearchViewModel!
+    
+    private var disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureUI()
-    }
-    
-    private func configureUI() {
+        viewModel = SearchViewModel()
         view.backgroundColor = .white
-//        let searchController = UISearchController(searchResultsController: nil)
-//        searchController.searchBar.placeholder = "검색(placeholder)"
-//        // 내비게이션 바는 항상 표출되도록 설정
-//        searchController.hidesNavigationBarDuringPresentation = false
-//        /// updateSearchResults(for:) 델리게이트를 사용을 위한 델리게이트 할당
-//        searchController.searchResultsUpdater = self
-//        /// 뒷배경이 흐려지지 않도록 설정
-//        searchController.obscuresBackgroundDuringPresentation = false
-//        
-//        navigationItem.searchController = searchController
-//        navigationItem.hidesSearchBarWhenScrolling = false
+        title = "도시 검색"
         
+        view.addSubview(tableView)
+        
+        tableView.snp.makeConstraints { make in
+            make.leading.equalTo(view.snp.leading)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+            make.trailing.equalTo(view.snp.trailing)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+        }
+        
+        tableView.rx.modelSelected(Location.self)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] item in
+                let weatherViewController = WeatherViewController()
+                weatherViewController.location = item.coord
+                self?.present(weatherViewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        setupSearchController()
+        bind()
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        navigationItem.searchController = nil
+    }
+
+    
+    private func setupSearchController() {
+        
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchBar.placeholder = "검색(placeholder)"
+        // 내비게이션 바는 항상 표출되도록 설정
+        searchController.hidesNavigationBarDuringPresentation = false
+        /// 뒷배경이 흐려지지 않도록 설정
+        searchController.obscuresBackgroundDuringPresentation = false
+    
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+    }
+    
+    private func bind() {
+        let searchController = navigationItem.searchController
+        // searchBar의 text 변화를 감지하고, 이를 ViewModel의 input으로 바인드
+        let input = SearchViewModel.Input(text: searchController?.searchBar.rx.text.orEmpty.asObservable() ?? .empty())
+        
+        let output = viewModel.transform(input: input)
+        
+        // ViewModel의 output을 tableView에 바인드
+        output.data
+            .observe(on: MainScheduler.instance)
+            .bind(to: tableView.rx.items(cellIdentifier: "cell")) { (index, element: Location, cell) in
+                cell.textLabel?.text = element.name + ", " + element.country
+                cell.backgroundColor = .white
+                cell.textLabel?.textColor = .black
+            }
+            .disposed(by: disposeBag)
+    }
 }

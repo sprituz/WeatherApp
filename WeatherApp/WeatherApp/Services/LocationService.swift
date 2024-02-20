@@ -9,7 +9,7 @@ import RxSwift
 import RxCocoa
 import CoreLocation
 
-class LocationService: NSObject, CLLocationManagerDelegate {
+final class LocationService: NSObject, CLLocationManagerDelegate {
     static let shared = LocationService()
     let locationManager = CLLocationManager()
     public let location: BehaviorRelay<CLLocation?> = BehaviorRelay(value: nil)
