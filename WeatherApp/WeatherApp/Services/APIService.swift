@@ -59,6 +59,7 @@ final class APIService {
                     URLQueryItem(name: "lat", value: "\(lat)"),
                     URLQueryItem(name: "lon", value: "\(lon)"),
                     URLQueryItem(name: "exclude", value: "minutely,daily,alerts"),
+                    URLQueryItem(name: "cnt", value: "8"),
                     URLQueryItem(name: "units", value: "metric"),
                     URLQueryItem(name: "APPID", value: appid)
                 ])

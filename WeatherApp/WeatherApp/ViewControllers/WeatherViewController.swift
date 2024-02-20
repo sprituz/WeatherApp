@@ -12,7 +12,7 @@ import SnapKit
 import MapKit
 
 final class WeatherViewController: UIViewController {
-    // UI 요소 선언
+
     private lazy var cityLabel: UILabel = createLabel(fontSize: 40)
     private lazy var weatherDescriptionLabel: UILabel = createLabel(fontSize: 20)
     private lazy var weatherIcon: UIImageView = UIImageView()
@@ -129,7 +129,6 @@ final class WeatherViewController: UIViewController {
                         return Array(zip(weatherResponses, iconImages))
                     }
             }
-            .map { Array($0.prefix(8)) }
             .bind(to: weatherCollectionView.rx.items) { collectionView, row, item in
                     let indexPath = IndexPath(row: row, section: 0)
                     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HourCell", for: indexPath) as! HourlyCollectionViewCell
