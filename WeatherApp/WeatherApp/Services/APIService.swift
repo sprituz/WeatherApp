@@ -44,11 +44,12 @@ final class APIService {
                 let urlString = baseURL + "img/w/" + icon + ".png"
                 return URL(string: urlString)
             case .dailyForecast(let lat, let lon):
-                components = URLComponents(string: baseURL + "data/2.5/forecast/daily")
+                components = URLComponents(string: baseURL + "data/2.5/forecast")
                 queryItems.append(contentsOf: [
                     URLQueryItem(name: "lat", value: "\(lat)"),
                     URLQueryItem(name: "lon", value: "\(lon)"),
-                    URLQueryItem(name: "exclude", value: "minutely,daily,alerts"),
+                    URLQueryItem(name: "exclude", value: "minutely,hourly,alerts"),
+                    URLQueryItem(name: "lang", value: "kr"),
                     URLQueryItem(name: "units", value: "metric"),
                     URLQueryItem(name: "APPID", value: appid)
                 ])
@@ -59,7 +60,7 @@ final class APIService {
                     URLQueryItem(name: "lat", value: "\(lat)"),
                     URLQueryItem(name: "lon", value: "\(lon)"),
                     URLQueryItem(name: "exclude", value: "minutely,daily,alerts"),
-                    URLQueryItem(name: "cnt", value: "8"),
+                    URLQueryItem(name: "cnt", value: "9"),
                     URLQueryItem(name: "units", value: "metric"),
                     URLQueryItem(name: "APPID", value: appid)
                 ])
@@ -92,7 +93,7 @@ final class APIService {
         }
     }
     
-    private func performRequestIcon(url: URL) -> Observable<UIImage> {
+    private func performRequestImage(url: URL) -> Observable<UIImage> {
         return Observable.create { observer in
             let request = AF.request(url).response { response in
                 switch response.result {
@@ -121,7 +122,7 @@ final class APIService {
         guard let url = WeatherServiceEndpoint.weatherIcon(icon).url(appid: self.appid) else {
             return Observable.error(NetworkError.invalidURL)
         }
-        return performRequestIcon(url: url)
+        return performRequestImage(url: url)
     }
     
     func getDailyWeather(lat: Double, lon: Double) -> Observable<ResponseList> {

@@ -64,9 +64,10 @@ final class PageViewController: UIPageViewController, UIPageViewControllerDataSo
     
     
     func configurePageControl() {
-        pageControl.frame = CGRect(x: 0, y: UIScreen.main.bounds.maxY - 100, width: UIScreen.main.bounds.width, height: 50)
+        pageControl.frame = CGRect(x: 0, y: UIScreen.main.bounds.maxY - 80, width: UIScreen.main.bounds.width, height: 80)
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
+        pageControl.backgroundColor = .gray
         let image = UIImage(systemName: "location.fill")
         pageControl.setIndicatorImage(image, forPage: 0)
         view.addSubview(pageControl)
@@ -91,6 +92,14 @@ final class PageViewController: UIPageViewController, UIPageViewControllerDataSo
                 self?.navigationController?.pushViewController(searchVC, animated: true)
             })
             .disposed(by: disposeBag)
+        
+        mapButton.rx.tap
+            .subscribe(onNext: { [weak self] _ in
+                let mapVC = MapViewController()
+                self?.navigationController?.pushViewController(mapVC, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
     }
     
     

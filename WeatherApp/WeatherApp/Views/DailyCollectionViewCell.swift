@@ -1,17 +1,17 @@
 //
-//  HourlyCollectionViewCell.swift
+//  DailyCollectionViewCell.swift
 //  WeatherApp
 //
-//  Created by 이다연 on 2/19/24.
+//  Created by 이다연 on 2/21/24.
 //
 
 import UIKit
 import RxSwift
 import SnapKit
 
-class HourlyCollectionViewCell: UICollectionViewCell {
+class DailyCollectionViewCell: UICollectionViewCell {
     
-    lazy var timeLabel: UILabel = createLabel(fontSize: 15)
+    lazy var dateLabel: UILabel = createLabel(fontSize: 15)
     
     lazy var weatherIcon: UIImageView = UIImageView()
     
@@ -36,46 +36,43 @@ class HourlyCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        dateLabel.text = nil
         weatherIcon.image = nil
-        timeLabel.text = nil
         temperatureLabel.text = nil
     }
     
     
     private func setUI() {
         
-        contentView.addSubview(timeLabel)
+
+        contentView.addSubview(dateLabel)
         contentView.addSubview(weatherIcon)
         contentView.addSubview(temperatureLabel)
-        
-        timeLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.height.equalTo(20)
-            make.top.equalTo(10)
+
+        dateLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.width.height.equalTo(50)
+            make.leading.equalTo(10)
         }
         
         weatherIcon.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.width.height.equalTo(40)
-            make.top.equalTo(timeLabel.snp.bottom).offset(5)
+            make.centerY.equalToSuperview()
+            make.width.height.equalTo(50)
+            make.leading.equalTo(dateLabel.snp.trailing).offset(10)
         }
         
         temperatureLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.height.equalTo(20)
-            make.top.equalTo(weatherIcon.snp.bottom).offset(5)
+            make.centerY.equalToSuperview()
+            make.height.equalTo(60)
+            make.leading.equalTo(weatherIcon.snp.trailing).offset(10)
         }
     }
     
     func configure(weatherResponse: WeatherResponse, iconImage: UIImage) {
-        temperatureLabel.text = "\(weatherResponse.main.temp)°C" // 기온 설정
+        dateLabel.text = weatherResponse.dt.fromTimestamp(format: "MM/dd")
         weatherIcon.image = iconImage // 아이콘 이미지 설정
-        timeLabel.text = weatherResponse.dt.fromTimestamp(format: "HH:mm")
+        temperatureLabel.text = "\(weatherResponse.main.tempMin)°C / \(weatherResponse.main.tempMax)°C" // 기온 설정
     }
     
 }
 
-
-#Preview {
-    HourlyCollectionViewCell()
-}

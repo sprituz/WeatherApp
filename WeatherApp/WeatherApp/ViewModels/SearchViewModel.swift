@@ -30,37 +30,4 @@ final class SearchViewModel {
         }
         return Output(data: data)
     }
-    
-    func load<T: Decodable>(_ filename: String) -> Observable<T> {
-        return Observable.create { observer in
-            let data: Data
-            guard let file = Bundle.main.url(forResource: filename, withExtension: nil)
-            else {
-                observer.onError(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Couldn't find \(filename) in main bundle."]))
-                return Disposables.create()
-            }
-            
-            do {
-                data = try Data(contentsOf: file)
-            } catch {
-                observer.onError(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Couldn't load \(filename) from main bundle:\n\(error)"]))
-                return Disposables.create()
-            }
-            
-            do {
-                let decoder = JSONDecoder()
-                let result = try decoder.decode(T.self, from: data)
-                observer.onNext(result)
-                observer.onCompleted()
-            } catch {
-                observer.onError(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Couldn't parse \(filename) as \(T.self):\n\(error)"]))
-            }
-            
-            return Disposables.create()
-        }
-    }
-    
-    deinit {
-        print("SearchViewModel deinitialized")
-    }
 }

@@ -8,9 +8,9 @@
 import Foundation
 
 struct ResponseList: Decodable {
-    var cod: String
-    var message: Int
-    var cnt: Int
+    var cod: String?
+    var message: Int?
+    var cnt: Int?
     var list: [WeatherResponse]
 }
 

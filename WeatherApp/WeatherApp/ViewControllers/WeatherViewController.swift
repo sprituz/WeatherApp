@@ -12,16 +12,14 @@ import SnapKit
 import MapKit
 
 final class WeatherViewController: UIViewController {
-
+    
     private lazy var cityLabel: UILabel = createLabel(fontSize: 40)
     private lazy var weatherDescriptionLabel: UILabel = createLabel(fontSize: 20)
     private lazy var weatherIcon: UIImageView = UIImageView()
     private lazy var temperatureLabel: UILabel = createLabel(fontSize: 20)
-    private lazy var maxTemparatureLabel: UILabel = createLabel(fontSize: 20)
-    private lazy var minTemparatureLabel: UILabel = createLabel(fontSize: 20)
     private lazy var humidityLabel: UILabel = createLabel(fontSize: 20)
     
-    private lazy var weatherCollectionView: UICollectionView = {
+    private lazy var hourlyCollectionView: UICollectionView = {
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -30,6 +28,18 @@ final class WeatherViewController: UIViewController {
         collectionView.register(HourlyCollectionViewCell.self, forCellWithReuseIdentifier: "HourCell")
         return collectionView
     }()
+    
+    private lazy var dailyCollectionView: UICollectionView = {
+        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = UIColor.gray.withAlphaComponent(0.5)
+        collectionView.layer.cornerRadius = 10
+        collectionView.register(DailyCollectionViewCell.self, forCellWithReuseIdentifier: "DailyCell")
+        return collectionView
+    }()
+    
+    let scrollView = UIScrollView()
     
     var location: Coord?
     private var viewModel:WeatherViewModel!
@@ -44,9 +54,14 @@ final class WeatherViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        if let layout = weatherCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.itemSize = CGSize(width: weatherCollectionView.frame.width/4, height: weatherCollectionView.frame.height)
-            layout.invalidateLayout()
+        if let hourlyLayout = hourlyCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            hourlyLayout.itemSize = CGSize(width: hourlyCollectionView.frame.width/4, height: hourlyCollectionView.frame.height)
+            hourlyLayout.invalidateLayout()
+        }
+        
+        if let dailyLayout = dailyCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            dailyLayout.itemSize = CGSize(width: dailyCollectionView.frame.width, height: dailyCollectionView.frame.height/6)
+            dailyLayout.invalidateLayout()
         }
     }
     
@@ -59,9 +74,15 @@ final class WeatherViewController: UIViewController {
     }
     
     private func configureUI() {
+        view.addSubview(scrollView)
+        
+        scrollView.snp.makeConstraints { make in
+            make.width.height.leading.trailing.equalToSuperview()
+        }
+        
         view.backgroundColor = .black
-        [cityLabel, weatherIcon, weatherDescriptionLabel, temperatureLabel, maxTemparatureLabel, minTemparatureLabel, humidityLabel,weatherCollectionView].forEach {
-            view.addSubview($0)
+        [cityLabel, weatherIcon, weatherDescriptionLabel, temperatureLabel, humidityLabel,hourlyCollectionView,dailyCollectionView].forEach {
+            scrollView.addSubview($0)
         }
         
         cityLabel.snp.makeConstraints { make in
@@ -85,35 +106,37 @@ final class WeatherViewController: UIViewController {
             make.top.equalTo(weatherDescriptionLabel.snp.bottom).offset(10)
         }
         
-        maxTemparatureLabel.snp.makeConstraints { make in
+        humidityLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(temperatureLabel.snp.bottom).offset(10)
         }
         
-        minTemparatureLabel.snp.makeConstraints { make in
+        hourlyCollectionView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(maxTemparatureLabel.snp.bottom).offset(10)
-        }
-        
-        humidityLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(minTemparatureLabel.snp.bottom).offset(10)
-        }
-        
-        weatherCollectionView.snp.makeConstraints { make in
-                make.centerX.equalToSuperview()
-                make.top.equalTo(humidityLabel.snp.bottom).offset(10)
-                make.height.equalTo(120)
+            make.top.equalTo(humidityLabel.snp.bottom).offset(10)
+            make.height.equalTo(120)
             make.width.equalToSuperview().inset(50)
-            }
+        }
+        
+        dailyCollectionView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(hourlyCollectionView.snp.bottom).offset(10)
+            make.height.equalTo(400)
+            make.width.equalToSuperview().inset(50)
+            make.bottom.equalToSuperview().inset(50)
+        }
     }
     
     private func bind() {
+        
         let input = WeatherViewModel.Input(location: Observable.just(location ?? Coord(lon: nil, lat: nil)))
+        
         let output = viewModel.transform(input: input)
+        
         output.data.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] weatherResponse in
             self?.updateLabels(with: weatherResponse)
         }).disposed(by: disposeBag)
+        
         output.icon.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] image in
             self?.weatherIcon.image = image
         }).disposed(by: disposeBag)
@@ -129,26 +152,38 @@ final class WeatherViewController: UIViewController {
                         return Array(zip(weatherResponses, iconImages))
                     }
             }
-            .bind(to: weatherCollectionView.rx.items) { collectionView, row, item in
-                    let indexPath = IndexPath(row: row, section: 0)
-                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HourCell", for: indexPath) as! HourlyCollectionViewCell
-                    let (weatherResponse, iconImage) = item
+            .bind(to: hourlyCollectionView.rx.items) { collectionView, row, item in
+                let indexPath = IndexPath(row: row, section: 0)
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HourCell", for: indexPath) as! HourlyCollectionViewCell
+                let (weatherResponse, iconImage) = item
                 cell.configure(weatherResponse: weatherResponse, iconImage: iconImage)
-                    return cell
-                }
-                .disposed(by: disposeBag)
-
-
-
+                return cell
+            }
+            .disposed(by: disposeBag)
+        
+        output.dailyData
+            .flatMap { weatherResponses in
+                output.dailyIcons
+                    .map { iconImages in
+                        return Array(zip(weatherResponses, iconImages))
+                    }
+            }
+            .bind(to: dailyCollectionView.rx.items) { collectionView, row, item in
+                let indexPath = IndexPath(row: row, section: 0)
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DailyCell", for: indexPath) as! DailyCollectionViewCell
+                let (weatherResponse, iconImage) = item
+                cell.configure(weatherResponse: weatherResponse, iconImage: iconImage)
+                return cell
+            }
+            .disposed(by: disposeBag)
+        
     }
     
     private func updateLabels(with weatherResponse: WeatherResponse) {
         cityLabel.text = weatherResponse.name
         weatherDescriptionLabel.text = weatherResponse.weather.first?.description
         temperatureLabel.text = String(format:"%.2f",weatherResponse.main.temp) + "℃"
-        maxTemparatureLabel.text = "최고: "+String(format:"%.2f",weatherResponse.main.tempMax) + "℃"
-        minTemparatureLabel.text = "최저: "+String(format:"%.2f",weatherResponse.main.tempMin) + "℃"
-        humidityLabel.text = "humidity: "+String(format:"%.2f",weatherResponse.main.humidity) + "%"
+        humidityLabel.text = "습도: "+String(format:"%.2f",weatherResponse.main.humidity) + "%"
     }
 }
 

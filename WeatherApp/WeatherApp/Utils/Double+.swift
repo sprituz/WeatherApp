@@ -8,7 +8,7 @@
 import Foundation
 
 extension Double {
-    func fromTimestamp(format: String = "HH:mm") -> String {
+    func fromTimestamp(format: String) -> String {
         let date = Date(timeIntervalSince1970: self)
         let formatter = DateFormatter()
         formatter.dateFormat = format
