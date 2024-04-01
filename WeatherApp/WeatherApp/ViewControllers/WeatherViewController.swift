@@ -13,11 +13,24 @@ import MapKit
 
 final class WeatherViewController: UIViewController {
     
-    private lazy var cityLabel: UILabel = createLabel(fontSize: 40)
-    private lazy var weatherDescriptionLabel: UILabel = createLabel(fontSize: 20)
+    //추가 버튼 보여줄지 말지
+    var shouldShowAddButton = false
+    
+    let addButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("추가", for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .clear
+        return button
+    }()
+        
+    
+    private lazy var cityLabel: UILabel = createLabel(fontSize: 40, fontWeight: .bold)
+    private lazy var weatherDescriptionLabel: UILabel = createLabel(fontSize: 20, fontWeight: .bold)
     private lazy var weatherIcon: UIImageView = UIImageView()
-    private lazy var temperatureLabel: UILabel = createLabel(fontSize: 20)
-    private lazy var humidityLabel: UILabel = createLabel(fontSize: 20)
+    private lazy var temperatureLabel: UILabel = createLabel(fontSize: 20, fontWeight: .regular)
+    private lazy var humidityLabel: UILabel = createLabel(fontSize: 20, fontWeight: .regular)
     
     private lazy var hourlyCollectionView: UICollectionView = {
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
@@ -41,12 +54,22 @@ final class WeatherViewController: UIViewController {
     
     let scrollView = UIScrollView()
     
+    // 위치
     var location: Coord?
+    
     private var viewModel:WeatherViewModel!
+    
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if shouldShowAddButton {
+            addButton.isHidden = false
+        } else {
+            addButton.isHidden = true
+        }
+        
         configureUI()
         viewModel = WeatherViewModel()
         bind()
@@ -65,16 +88,18 @@ final class WeatherViewController: UIViewController {
         }
     }
     
-    private func createLabel(fontSize: CGFloat) -> UILabel {
+    private func createLabel(fontSize: CGFloat, fontWeight: UIFont.Weight) -> UILabel {
         let label = UILabel()
         label.text = ""
         label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: fontSize)
+        label.font = UIFont.systemFont(ofSize: fontSize, weight: fontWeight)
         return label
     }
     
     private func configureUI() {
+        
         view.addSubview(scrollView)
+        view.addSubview(addButton)
         
         scrollView.snp.makeConstraints { make in
             make.width.height.leading.trailing.equalToSuperview()
@@ -83,6 +108,13 @@ final class WeatherViewController: UIViewController {
         view.backgroundColor = .black
         [cityLabel, weatherIcon, weatherDescriptionLabel, temperatureLabel, humidityLabel,hourlyCollectionView,dailyCollectionView].forEach {
             scrollView.addSubview($0)
+        }
+        
+        addButton.snp.makeConstraints { make in
+            make.width.height.equalTo(50)
+            make.top.equalToSuperview().inset(10)
+            make.trailing.equalToSuperview().inset(10)
+            make.leading.equalToSuperview().inset(300)
         }
         
         cityLabel.snp.makeConstraints { make in
@@ -129,15 +161,25 @@ final class WeatherViewController: UIViewController {
     
     private func bind() {
         
-        let input = WeatherViewModel.Input(location: Observable.just(location ?? Coord(lon: nil, lat: nil)))
+        addButton.rx.tap
+            .subscribe(onNext: { [weak self] _ in
+                // 화면 닫기 동작 구현
+                self?.dismiss(animated: true, completion: nil)
+            })
+            .disposed(by: disposeBag)
+        
+        let input = WeatherViewModel.Input(location: Observable.just(location ?? Coord(lon: nil, lat: nil)),
+                                           addButtonTapped: addButton.rx.tap.asObservable())
         
         let output = viewModel.transform(input: input)
         
-        output.data.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] weatherResponse in
+        output.data.observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] weatherResponse in
             self?.updateLabels(with: weatherResponse)
         }).disposed(by: disposeBag)
         
-        output.icon.observe(on: MainScheduler.instance).subscribe(onNext: { [weak self] image in
+        output.icon.observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] image in
             self?.weatherIcon.image = image
         }).disposed(by: disposeBag)
         
@@ -175,6 +217,13 @@ final class WeatherViewController: UIViewController {
                 cell.configure(weatherResponse: weatherResponse, iconImage: iconImage)
                 return cell
             }
+            .disposed(by: disposeBag)
+        
+        // 위치 UserDefaults에 있으면 추가버튼 숨기기
+        output.shouldShowAddButton.observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] shouldShow in
+                self?.addButton.isHidden = !shouldShow
+            })
             .disposed(by: disposeBag)
         
     }

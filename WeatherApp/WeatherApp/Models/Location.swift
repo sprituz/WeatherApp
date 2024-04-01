@@ -14,7 +14,7 @@ struct Location: Decodable {
     let coord: Coord
 }
 
-struct Coord: Decodable,Equatable {
+struct Coord: Codable,Equatable {
     let lon: Double?
     let lat: Double?
 }

@@ -46,6 +46,7 @@ final class SearchViewController: UIViewController {
             .subscribe(onNext: { [weak self] item in
                 let weatherViewController = WeatherViewController()
                 weatherViewController.location = item.coord
+                weatherViewController.shouldShowAddButton = true
                 self?.present(weatherViewController, animated: true)
             })
             .disposed(by: disposeBag)
@@ -63,7 +64,7 @@ final class SearchViewController: UIViewController {
     private func setupSearchController() {
         
         let searchController = UISearchController(searchResultsController: nil)
-        searchController.searchBar.placeholder = "검색(placeholder)"
+        searchController.searchBar.placeholder = "Enter city name"
         // 내비게이션 바는 항상 표출되도록 설정
         searchController.hidesNavigationBarDuringPresentation = false
         /// 뒷배경이 흐려지지 않도록 설정
@@ -87,7 +88,13 @@ final class SearchViewController: UIViewController {
                 cell.textLabel?.text = element.name + ", " + element.country
                 cell.backgroundColor = .white
                 cell.textLabel?.textColor = .black
+                cell.selectionStyle = .none
             }
             .disposed(by: disposeBag)
     }
+}
+
+@available(iOS 17.0, *)
+#Preview {
+    SearchViewController()
 }

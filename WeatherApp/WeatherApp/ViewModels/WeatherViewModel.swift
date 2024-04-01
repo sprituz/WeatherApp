@@ -7,15 +7,18 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 import CoreLocation
 
 final class WeatherViewModel {
     
     private let apiService = APIService.shared
     private let locationManager = LocationService.shared
+    private let userDefaultsService = UserDefaultsService.shared
     
     struct Input {
         let location: Observable<Coord>
+        let addButtonTapped: Observable<Void>
     }
     
     struct Output {
@@ -25,7 +28,10 @@ final class WeatherViewModel {
         let dailyIcons: Observable<[UIImage]>
         let hourlyData: Observable<ResponseList>
         let hourlyIcons: Observable<[UIImage]>
+        let shouldShowAddButton: Observable<Bool>
     }
+    
+    var disposeBag = DisposeBag()
     
     func transform(input: Input) -> Output {
         let data = input.location
@@ -42,6 +48,13 @@ final class WeatherViewModel {
                     return self.apiService.getWeather(lat: location.lat!, lon: location.lon!)
                 }
             }
+        
+        input.addButtonTapped
+            .withLatestFrom(input.location) // 최신 위치 데이터를 가져옵니다.
+            .subscribe(onNext: { [weak self] location in
+                self?.userDefaultsService.storeLocationData(location)
+            })
+            .disposed(by: disposeBag)
         
         let icon = data
             .flatMapLatest { [weak self] response -> Observable<UIImage> in
@@ -66,7 +79,7 @@ final class WeatherViewModel {
                 } else {
                     observable = self.apiService.getDailyWeather(lat: location.lat!, lon: location.lon!)
                 }
-
+                
                 return observable
                     .map { responseList in
                         let grouped = Dictionary(grouping: responseList.list, by: { $0.dt.fromTimestamp(format: "MM/dd") })
@@ -80,16 +93,16 @@ final class WeatherViewModel {
                     .map { $0.sorted(by: { $0.dt < $1.dt }) }  // 날짜순으로 정렬
                     .map { Array($0.prefix(5)) }  // 상위 5개 요소만 선택
             }
-
-
+        
+        
         let dailyIcons = dailyData
-                    .flatMap { dataList -> Observable<[UIImage]> in
-                        let iconObservables = dataList.map { weatherResponse -> Observable<UIImage> in
-                            let icon = weatherResponse.weather.first?.icon ?? ""
-                            return self.apiService.getWeatherIcon(icon: icon)
-                        }
-                        return Observable.combineLatest(iconObservables)
-                    }
+            .flatMap { dataList -> Observable<[UIImage]> in
+                let iconObservables = dataList.map { weatherResponse -> Observable<UIImage> in
+                    let icon = weatherResponse.weather.first?.icon ?? ""
+                    return self.apiService.getWeatherIcon(icon: icon)
+                }
+                return Observable.combineLatest(iconObservables)
+            }
         
         
         
@@ -117,9 +130,18 @@ final class WeatherViewModel {
                 return Observable.combineLatest(iconObservables)
             }
         
+        let locationDataObservable = UserDefaultsService.shared.locationData()
         
+        let shouldShowAddButton = input.location
+                   .flatMapLatest { location -> Observable<Bool> in
+                       locationDataObservable
+                           .map { locations in
+                               // UserDefaults에 같은 위치 정보가 없으면 true (추가 버튼 보이게), 있으면 false (추가 버튼 숨기게)
+                               !locations.contains(location)
+                           }
+                   }
+                   .startWith(false)
         
-        
-        return Output(data: data, icon: icon, dailyData: dailyData, dailyIcons: dailyIcons, hourlyData: hourlyData, hourlyIcons: hourlyIcons)
+        return Output(data: data, icon: icon, dailyData: dailyData, dailyIcons: dailyIcons, hourlyData: hourlyData, hourlyIcons: hourlyIcons, shouldShowAddButton: shouldShowAddButton)
     }
 }

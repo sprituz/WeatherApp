@@ -13,6 +13,8 @@ final class PageViewController: UIPageViewController, UIPageViewControllerDataSo
     var pages: [UIViewController] = []
     var pageControl = UIPageControl()
     
+    private let userDefaultsService = UserDefaultsService.shared
+    
     private lazy var mapButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
         if let image = UIImage(systemName: "map") {
@@ -49,19 +51,48 @@ final class PageViewController: UIPageViewController, UIPageViewControllerDataSo
         dataSource = self
         delegate = self
         
-        let page1 = WeatherViewController()
-        page1.location = Coord(lon: nil, lat: nil)
-        pages.append(page1)
+        // 위치 데이터 업데이트에 따른 페이지 재설정 로직 추가
+        userDefaultsService.locationData()
+            .subscribe(onNext: { [weak self] updatedLocationData in
+                self?.updatePages(with: updatedLocationData)
+            }).disposed(by: disposeBag)
         
-        
-        if let firstPage = pages.first {
-            setViewControllers([firstPage], direction: .forward, animated: true, completion: nil)
-        }
+        userDefaultsService.locationDataChanged
+            .flatMapLatest { _ in
+                UserDefaultsService.shared.locationData()
+            }
+            .subscribe(onNext: { [weak self] updatedLocationData in
+                self?.updatePages(with: updatedLocationData)
+            })
+            .disposed(by: disposeBag)
+
         
         configurePageControl()
-        
     }
     
+
+    
+    private func updatePages(with coords: [Coord]) {
+        pages.removeAll()
+        let page = WeatherViewController()
+        page.location = Coord(lon: nil, lat: nil)
+        pages.append(page)
+        
+        for coord in coords {
+            let vc = WeatherViewController()
+            vc.location = coord
+            pages.append(vc)
+        }
+        
+        // 첫 번째 페이지로 다시 설정
+        if let firstPage = pages.first {
+            setViewControllers([firstPage], direction: .forward, animated: false, completion: nil)
+        }
+        
+        pageControl.currentPage = 0
+        pageControl.numberOfPages = pages.count
+    }
+
     
     func configurePageControl() {
         pageControl.frame = CGRect(x: 0, y: UIScreen.main.bounds.maxY - 80, width: UIScreen.main.bounds.width, height: 80)
@@ -102,27 +133,29 @@ final class PageViewController: UIPageViewController, UIPageViewControllerDataSo
         
     }
     
-    
-    
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        if completed, let viewController = pageViewController.viewControllers?.first, let index = pages.firstIndex(of: viewController) {
+            pageControl.currentPage = index
+        }
+    }
+
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let index = pages.firstIndex(of: viewController) else { return nil }
         let previousIndex = index - 1
         if previousIndex < 0 {
             return nil
         }
-        pageControl.currentPage = previousIndex
         return pages[previousIndex]
     }
-    
+
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let index = pages.firstIndex(of: viewController) else { return nil }
         let nextIndex = index + 1
         if nextIndex == pages.count {
             return nil
         }
-        pageControl.currentPage = nextIndex
         return pages[nextIndex]
     }
+
     
 }
-
