@@ -11,17 +11,17 @@ import SnapKit
 
 class DailyCollectionViewCell: UICollectionViewCell {
     
-    lazy var dateLabel: UILabel = createLabel(fontSize: 15)
+    lazy var dateLabel: UILabel = createLabel(fontSize: 15, fontWeight: .bold)
     
     lazy var weatherIcon: UIImageView = UIImageView()
     
-    lazy var temperatureLabel: UILabel = createLabel(fontSize: 15)
+    lazy var temperatureLabel: UILabel = createLabel(fontSize: 15, fontWeight: .regular)
     
-    private func createLabel(fontSize: CGFloat) -> UILabel {
+    private func createLabel(fontSize: CGFloat, fontWeight: UIFont.Weight) -> UILabel {
         let label = UILabel()
         label.text = ""
         label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: fontSize)
+        label.font = UIFont.systemFont(ofSize: fontSize, weight: fontWeight)
         return label
     }
     
