@@ -144,3 +144,20 @@ final class APIService {
         case invalidURL
     }
 }
+
+//위젯때문에...
+extension APIService {
+    func getWeatherAsync(lat: Double, lon: Double) async throws -> WeatherResponse {
+        guard let url = WeatherServiceEndpoint.byCoordinates(lat, lon).url(appid: self.appid) else {
+            throw NetworkError.invalidURL
+        }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let weatherResponse = try JSONDecoder().decode(WeatherResponse.self, from: data)
+            return weatherResponse
+        } catch {
+            throw error
+        }
+    }
+}
