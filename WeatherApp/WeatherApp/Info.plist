@@ -4,7 +4,7 @@
 <dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>우리는 백그라운드에서도 날씨 업데이트를 제공하기 위해 당신의 현재 위치정보가 필요합니다.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
+	<key>NSLocationAlwaysUsageDescription</key>
 	<string>우리는 날씨 정보를 제공하기 위해 당신의 현재 위치정보가 필요합니다.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
