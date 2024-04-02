@@ -32,7 +32,6 @@ final class APIService {
             var components = URLComponents(string: baseURL + "data/2.5/weather")
             var queryItems = [
                 URLQueryItem(name: "APPID", value: appid),
-                URLQueryItem(name: "lang", value: "kr"),
                 URLQueryItem(name: "units", value: "metric")
             ]
             
@@ -49,7 +48,6 @@ final class APIService {
                     URLQueryItem(name: "lat", value: "\(lat)"),
                     URLQueryItem(name: "lon", value: "\(lon)"),
                     URLQueryItem(name: "exclude", value: "minutely,hourly,alerts"),
-                    URLQueryItem(name: "lang", value: "kr"),
                     URLQueryItem(name: "units", value: "metric"),
                     URLQueryItem(name: "APPID", value: appid)
                 ])

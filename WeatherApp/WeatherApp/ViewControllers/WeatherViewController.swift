@@ -18,7 +18,7 @@ final class WeatherViewController: UIViewController {
     
     let addButton = {
         let button = UIButton(type: .system)
-        button.setTitle("추가", for: .normal)
+        button.setTitle("Add", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .clear
@@ -232,7 +232,7 @@ final class WeatherViewController: UIViewController {
         cityLabel.text = weatherResponse.name
         weatherDescriptionLabel.text = weatherResponse.weather.first?.description
         temperatureLabel.text = String(format:"%.2f",weatherResponse.main.temp) + "℃"
-        humidityLabel.text = "습도: "+String(format:"%.2f",weatherResponse.main.humidity) + "%"
+        humidityLabel.text = "humidity: "+String(format:"%.2f",weatherResponse.main.humidity) + "%"
     }
 }
 
