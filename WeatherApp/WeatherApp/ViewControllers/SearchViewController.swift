@@ -30,7 +30,7 @@ final class SearchViewController: UIViewController {
         super.viewDidLoad()
         viewModel = SearchViewModel()
         view.backgroundColor = .white
-        title = "도시 검색"
+        title = "Weather"
         
         view.addSubview(tableView)
         

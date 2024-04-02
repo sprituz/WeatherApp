@@ -35,7 +35,6 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // 가장 최근의 위치 정보를 받아 BehaviorRelay에 저장합니다.
         location.accept(locations.last)
-        print(locations.last)
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

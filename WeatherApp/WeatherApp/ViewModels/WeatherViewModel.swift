@@ -13,7 +13,7 @@ import CoreLocation
 final class WeatherViewModel {
     
     private let apiService = APIService.shared
-    private let locationManager = LocationService.shared
+    private let locationService = LocationService.shared
     private let userDefaultsService = UserDefaultsService.shared
     
     struct Input {
@@ -39,7 +39,7 @@ final class WeatherViewModel {
                 guard let self = self else { return Observable.empty() }
                 
                 if location == Coord(lon: nil, lat: nil) {
-                    return self.locationManager.location
+                    return self.locationService.location
                         .flatMapLatest { currentLocation -> Observable<WeatherResponse> in
                             guard let currentLocation = currentLocation else { return Observable.empty() }
                             return self.apiService.getWeather(lat: currentLocation.coordinate.latitude, lon: currentLocation.coordinate.longitude)
@@ -71,7 +71,7 @@ final class WeatherViewModel {
                 guard let self = self else { return Observable.empty() }
                 let observable: Observable<ResponseList>
                 if location == Coord(lon: nil, lat: nil) {
-                    observable = self.locationManager.location
+                    observable = self.locationService.location
                         .flatMapLatest { currentLocation -> Observable<ResponseList> in
                             guard let currentLocation = currentLocation else { return Observable.empty() }
                             return self.apiService.getDailyWeather(lat: currentLocation.coordinate.latitude, lon: currentLocation.coordinate.longitude)
@@ -111,7 +111,7 @@ final class WeatherViewModel {
                 guard let self = self else { return Observable.empty() }
                 
                 if location == Coord(lon: nil, lat: nil) {
-                    return self.locationManager.location
+                    return self.locationService.location
                         .flatMapLatest { currentLocation -> Observable<ResponseList> in
                             guard let currentLocation = currentLocation else { return Observable.empty() }
                             return self.apiService.getHourlyWeather(lat: currentLocation.coordinate.latitude, lon: currentLocation.coordinate.longitude)
@@ -130,17 +130,17 @@ final class WeatherViewModel {
                 return Observable.combineLatest(iconObservables)
             }
         
-        let locationDataObservable = UserDefaultsService.shared.locationData()
+        let myLocation = userDefaultsService.locationData()
         
         let shouldShowAddButton = input.location
-                   .flatMapLatest { location -> Observable<Bool> in
-                       locationDataObservable
-                           .map { locations in
-                               // UserDefaults에 같은 위치 정보가 없으면 true (추가 버튼 보이게), 있으면 false (추가 버튼 숨기게)
-                               !locations.contains(location)
-                           }
-                   }
-                   .startWith(false)
+            .flatMapLatest { location -> Observable<Bool> in
+                myLocation
+                    .map { locations in
+                        // UserDefaults에 같은 위치 정보가 없으면 true (추가 버튼 보이게), 있으면 false (추가 버튼 숨기게)
+                        !locations.contains(location)
+                    }
+            }
+            .startWith(false)
         
         return Output(data: data, icon: icon, dailyData: dailyData, dailyIcons: dailyIcons, hourlyData: hourlyData, hourlyIcons: hourlyIcons, shouldShowAddButton: shouldShowAddButton)
     }
