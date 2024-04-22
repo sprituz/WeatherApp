@@ -18,4 +18,3 @@ class WeatherTileOverlay: MKTileOverlay {
         return URL(string: urlStr)!
     }
 }
-

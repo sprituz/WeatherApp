@@ -105,4 +105,4 @@ iOSInjectionProject/
 
 # End of https://www.toptal.com/developers/gitignore/api/xcode,swift,cocoapods
 WeatherApp.xcodeproj/xcuserdata/dayeon.xcuserdatad/xcschemes/xcschememanagement.plist
-WeatherApp/WeatherInfo.plist
+WeatherInfo.plist
