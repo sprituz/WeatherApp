@@ -134,7 +134,12 @@ final class WeatherViewModel {
         
         let shouldShowAddButton = input.location
             .flatMapLatest { location -> Observable<Bool> in
-                myLocation
+                
+                guard let _ = location.lon, let _ = location.lat else {
+                    return .just(false)
+                }
+                
+                return myLocation
                     .map { locations in
                         // UserDefaults에 같은 위치 정보가 없으면 true (추가 버튼 보이게), 있으면 false (추가 버튼 숨기게)
                         !locations.contains(location)

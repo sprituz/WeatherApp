@@ -22,21 +22,25 @@ class UserDefaultsService {
     let locationDataChanged = PublishSubject<Void>()
     
     func locationData() -> Observable<[Coord]> {
-        return Observable.create { observer in
-            if let savedLocationData = UserDefaults.standard.object(forKey: "myLocation") as? Data {
-                do {
-                    let loadedLocationData = try self.decoder.decode([Coord].self, from: savedLocationData)
-                    observer.onNext(loadedLocationData) // 성공한 경우 데이터 방출
-                } catch {
-                    observer.onError(error) // 디코딩 실패한 경우 에러 방출
+        return locationDataChanged
+            .startWith(()) // 초기 구독 시점에도 데이터를 불러오기 위해 사용
+            .flatMapLatest { _ -> Observable<[Coord]> in // locationDataChanged 이벤트가 발생할 때마다 실행
+                Observable.create { observer in
+                    if let savedLocationData = UserDefaults.standard.object(forKey: "myLocation") as? Data {
+                        do {
+                            let loadedLocationData = try self.decoder.decode([Coord].self, from: savedLocationData)
+                            observer.onNext(loadedLocationData) // 성공한 경우 데이터 방출
+                        } catch {
+                            observer.onError(error) // 디코딩 실패한 경우 에러 방출
+                        }
+                    } else {
+                        observer.onNext([]) // 저장된 데이터가 없는 경우 빈 배열 방출
+                    }
+                    return Disposables.create() // 필요한 경우 리소스 해제를 위한 구문
                 }
-            } else {
-                observer.onNext([]) // 저장된 데이터가 없는 경우 빈 배열 방출
             }
-            observer.onCompleted() // Observable 시퀀스의 완료를 알림
-            return Disposables.create() // 필요한 경우 리소스 해제를 위한 구문
-        }
     }
+
     
     // 삭제 메소드 구현
     func deleteLocationData(_ coord: Coord) {

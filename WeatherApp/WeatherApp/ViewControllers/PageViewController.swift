@@ -65,12 +65,12 @@ final class PageViewController: UIPageViewController, UIPageViewControllerDataSo
                 self?.updatePages(with: updatedLocationData)
             })
             .disposed(by: disposeBag)
-
+        
         
         configurePageControl()
     }
     
-
+    
     
     private func updatePages(with coords: [Coord]) {
         pages.removeAll()
@@ -92,7 +92,7 @@ final class PageViewController: UIPageViewController, UIPageViewControllerDataSo
         pageControl.currentPage = 0
         pageControl.numberOfPages = pages.count
     }
-
+    
     
     func configurePageControl() {
         pageControl.frame = CGRect(x: 0, y: UIScreen.main.bounds.maxY - 80, width: UIScreen.main.bounds.width, height: 80)
@@ -117,6 +117,20 @@ final class PageViewController: UIPageViewController, UIPageViewControllerDataSo
             make.centerY.equalToSuperview()
         }
         
+        // 페이지 컨트롤로 페이지 변경
+        pageControl.rx.controlEvent(.valueChanged)
+                    .bind { _ in
+                        guard let firstView = self.viewControllers?.first, let index = self.pages.firstIndex(of: firstView) else { return }
+                        let page = self.pageControl.currentPage
+                        if page > index {
+                            self.setViewControllers([self.pages[page]], direction: .forward, animated: true)
+                        } else {
+                            self.setViewControllers([self.pages[page]], direction: .reverse, animated: true)
+                        }
+                        
+                    }
+                    .disposed(by: disposeBag)
+        
         searchButton.rx.tap
             .subscribe(onNext: { [weak self] _ in
                 let searchVC = SearchViewController()
@@ -132,13 +146,15 @@ final class PageViewController: UIPageViewController, UIPageViewControllerDataSo
             .disposed(by: disposeBag)
         
     }
-    
+}
+
+extension PageViewController {
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         if completed, let viewController = pageViewController.viewControllers?.first, let index = pages.firstIndex(of: viewController) {
             pageControl.currentPage = index
         }
     }
-
+    
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let index = pages.firstIndex(of: viewController) else { return nil }
         let previousIndex = index - 1
@@ -147,7 +163,7 @@ final class PageViewController: UIPageViewController, UIPageViewControllerDataSo
         }
         return pages[previousIndex]
     }
-
+    
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let index = pages.firstIndex(of: viewController) else { return nil }
         let nextIndex = index + 1
@@ -156,6 +172,4 @@ final class PageViewController: UIPageViewController, UIPageViewControllerDataSo
         }
         return pages[nextIndex]
     }
-
-    
 }

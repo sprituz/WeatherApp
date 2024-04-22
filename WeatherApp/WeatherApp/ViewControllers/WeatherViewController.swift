@@ -63,15 +63,8 @@ final class WeatherViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if shouldShowAddButton {
-            addButton.isHidden = false
-        } else {
-            addButton.isHidden = true
-        }
-        
-        configureUI()
         viewModel = WeatherViewModel()
+        configureUI()
         bind()
     }
     
@@ -101,6 +94,13 @@ final class WeatherViewController: UIViewController {
         view.addSubview(scrollView)
         view.addSubview(addButton)
         
+        if shouldShowAddButton {
+            addButton.isHidden = false
+        } else {
+            addButton.isHidden = true
+        }
+        
+        
         scrollView.snp.makeConstraints { make in
             make.width.height.leading.trailing.equalToSuperview()
         }
@@ -114,7 +114,6 @@ final class WeatherViewController: UIViewController {
             make.width.height.equalTo(50)
             make.top.equalToSuperview().inset(10)
             make.trailing.equalToSuperview().inset(10)
-            make.leading.equalToSuperview().inset(300)
         }
         
         cityLabel.snp.makeConstraints { make in
