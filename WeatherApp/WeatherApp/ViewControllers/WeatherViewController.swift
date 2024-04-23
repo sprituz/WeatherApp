@@ -193,6 +193,7 @@ final class WeatherViewController: UIViewController {
                         return Array(zip(weatherResponses, iconImages))
                     }
             }
+            .observe(on: MainScheduler.instance)
             .bind(to: hourlyCollectionView.rx.items) { collectionView, row, item in
                 let indexPath = IndexPath(row: row, section: 0)
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HourCell", for: indexPath) as! HourlyCollectionViewCell
@@ -209,6 +210,7 @@ final class WeatherViewController: UIViewController {
                         return Array(zip(weatherResponses, iconImages))
                     }
             }
+            .observe(on: MainScheduler.instance)
             .bind(to: dailyCollectionView.rx.items) { collectionView, row, item in
                 let indexPath = IndexPath(row: row, section: 0)
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DailyCell", for: indexPath) as! DailyCollectionViewCell

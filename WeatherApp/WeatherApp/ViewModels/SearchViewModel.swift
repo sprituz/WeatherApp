@@ -18,13 +18,13 @@ final class SearchViewModel {
     
     struct Input {
         let text: Observable<String>
-        let deleteTrigger: Observable<Coord>
+        let deleteTrigger: Observable<(Coord, WeatherResponse)>
     }
     
     struct Output {
         let data: Observable<[Location]>
         let myLocation: Observable<[Coord]>
-        let savedWeatherData: Observable<[WeatherResponse]>
+        let savedWeatherData: Observable<[(Coord, WeatherResponse)]>
     }
     
     var disposeBag = DisposeBag()
@@ -37,7 +37,7 @@ final class SearchViewModel {
         }
         
         input.deleteTrigger
-                   .subscribe(onNext: { coord in
+                   .subscribe(onNext: { (coord,weatherResponse) in
                        self.userDefaultsService.deleteLocationData(coord)
                        // UserDefaults에서 데이터를 다시 불러와 locations를 업데이트
                    })
@@ -46,15 +46,19 @@ final class SearchViewModel {
         let myLocation = userDefaultsService.locationData()
         
         let savedWeatherData = myLocation.flatMapLatest { coordArray in
-            // coordArray에 있는 각 Coord에 대해 날씨 데이터를 요청하는 Observable을 생성합니다.
+            // coordArray에 있는 각 Coord에 대해 날씨 데이터와 위치 정보를 묶어서 반환하는 Observable을 생성합니다.
             let weatherObservables = coordArray.map { coord in
                 self.apiService.getWeather(lat: coord.lat ?? 0, lon: coord.lon ?? 0)
+                    .map { weatherResponse -> (Coord, WeatherResponse) in
+                        // 날씨 데이터와 위치 정보를 튜플로 묶어서 반환합니다.
+                        return (coord, weatherResponse)
+                    }
             }
-            // Observable.from을 사용하여 Observable<Observable<WeatherData>>를 Observable<WeatherData>로 변환합니다.
+            // Observable.from을 사용하여 Observable<Observable<(Coord, WeatherData)>>를 Observable<(Coord, WeatherData)>로 변환합니다.
             return Observable.from(weatherObservables)
                 .merge() // 모든 날씨 데이터 요청을 병합합니다.
                 .toArray() // 결과를 배열로 변환합니다.
-                .asObservable() // 최종적으로 Observable<[WeatherData]>를 반환합니다.
+                .asObservable() // 최종적으로 Observable<[(Coord, WeatherData)]>를 반환합니다.
         }
         
         return Output(data: data, myLocation: myLocation, savedWeatherData: savedWeatherData)

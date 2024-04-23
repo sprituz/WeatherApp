@@ -24,7 +24,7 @@ final class SearchViewController: UIViewController {
     
     lazy var searchResultTableView: UITableView = {
         let view = UITableView()
-        view.register(SavedWeatherTableViewCell.self, forCellReuseIdentifier: "cell")
+        view.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         view.keyboardDismissMode = .onDrag
         view.backgroundColor = .white
         return view
@@ -106,7 +106,7 @@ final class SearchViewController: UIViewController {
         
         // searchBar의 text 변화를 감지하고, 이를 ViewModel의 input으로 바인드
         let searchTextObservable = searchController?.searchBar.rx.text.orEmpty.asObservable() ?? .empty()
-        let deleteTrigger = savedWeatherTableView.rx.modelDeleted(Coord.self).asObservable()
+        let deleteTrigger = savedWeatherTableView.rx.modelDeleted((Coord,WeatherResponse).self).asObservable()
         
         let input = SearchViewModel.Input(text:searchTextObservable ,deleteTrigger: deleteTrigger)
         
@@ -125,8 +125,8 @@ final class SearchViewController: UIViewController {
         
         output.savedWeatherData
             .observe(on: MainScheduler.instance)
-            .bind(to: savedWeatherTableView.rx.items(cellIdentifier: "cell")) { (index, element: WeatherResponse, cell) in
-                if let cityName = element.name {
+            .bind(to: savedWeatherTableView.rx.items(cellIdentifier: "cell")) { (index, element: (Coord, WeatherResponse), cell) in
+                if let cityName = element.1.name {
                             cell.textLabel?.text = cityName
                         }
                 cell.backgroundColor = .white
