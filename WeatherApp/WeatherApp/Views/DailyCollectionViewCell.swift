@@ -43,8 +43,6 @@ class DailyCollectionViewCell: UICollectionViewCell {
     
     
     private func setUI() {
-        
-
         contentView.addSubview(dateLabel)
         contentView.addSubview(weatherIcon)
         contentView.addSubview(temperatureLabel)
@@ -52,7 +50,7 @@ class DailyCollectionViewCell: UICollectionViewCell {
         dateLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.width.height.equalTo(50)
-            make.leading.equalTo(10)
+            make.leading.equalTo(50)
         }
         
         weatherIcon.snp.makeConstraints { make in

@@ -24,7 +24,7 @@ final class WeatherViewController: UIViewController {
         button.backgroundColor = .clear
         return button
     }()
-        
+    
     
     private lazy var cityLabel: UILabel = createLabel(fontSize: 40, fontWeight: .bold)
     private lazy var weatherDescriptionLabel: UILabel = createLabel(fontSize: 20, fontWeight: .bold)
@@ -35,7 +35,8 @@ final class WeatherViewController: UIViewController {
     private lazy var hourlyCollectionView: UICollectionView = {
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        layout.itemSize = CGSize(width: (UIScreen.main.bounds.size.width - 50) / 4 , height: 120)
+        let collectionView = UICollectionView(frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.size.width - 50, height: 120), collectionViewLayout: layout)
         collectionView.backgroundColor = UIColor.gray.withAlphaComponent(0.5)
         collectionView.layer.cornerRadius = 10
         collectionView.register(HourlyCollectionViewCell.self, forCellWithReuseIdentifier: "HourCell")
@@ -45,7 +46,8 @@ final class WeatherViewController: UIViewController {
     private lazy var dailyCollectionView: UICollectionView = {
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        layout.itemSize = CGSize(width: (UIScreen.main.bounds.size.width - 50) , height: 400/6)
+        let collectionView = UICollectionView(frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.size.width - 50, height: 400), collectionViewLayout: layout)
         collectionView.backgroundColor = UIColor.gray.withAlphaComponent(0.5)
         collectionView.layer.cornerRadius = 10
         collectionView.register(DailyCollectionViewCell.self, forCellWithReuseIdentifier: "DailyCell")
@@ -68,18 +70,24 @@ final class WeatherViewController: UIViewController {
         bind()
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        if let hourlyLayout = hourlyCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            hourlyLayout.itemSize = CGSize(width: hourlyCollectionView.frame.width/4, height: hourlyCollectionView.frame.height)
-            hourlyLayout.invalidateLayout()
-        }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
-        if let dailyLayout = dailyCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            dailyLayout.itemSize = CGSize(width: dailyCollectionView.frame.width, height: dailyCollectionView.frame.height/6)
-            dailyLayout.invalidateLayout()
-        }
     }
+    
+    
+//    override func viewDidLayoutSubviews() {
+//        super.viewDidLayoutSubviews()
+//        if let hourlyLayout = hourlyCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+//            hourlyLayout.itemSize = CGSize(width: hourlyCollectionView.frame.width/4, height: hourlyCollectionView.frame.height)
+//            hourlyLayout.invalidateLayout()
+//        }
+//        
+//        if let dailyLayout = dailyCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+//            dailyLayout.itemSize = CGSize(width: dailyCollectionView.frame.width, height: dailyCollectionView.frame.height/6)
+//            dailyLayout.invalidateLayout()
+//        }
+//    }
     
     private func createLabel(fontSize: CGFloat, fontWeight: UIFont.Weight) -> UILabel {
         let label = UILabel()
@@ -174,13 +182,13 @@ final class WeatherViewController: UIViewController {
         
         output.data.observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] weatherResponse in
-            self?.updateLabels(with: weatherResponse)
-        }).disposed(by: disposeBag)
+                self?.updateLabels(with: weatherResponse)
+            }).disposed(by: disposeBag)
         
         output.icon.observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] image in
-            self?.weatherIcon.image = image
-        }).disposed(by: disposeBag)
+                self?.weatherIcon.image = image
+            }).disposed(by: disposeBag)
         
         
         output.hourlyData
@@ -193,7 +201,6 @@ final class WeatherViewController: UIViewController {
                         return Array(zip(weatherResponses, iconImages))
                     }
             }
-            .observe(on: MainScheduler.instance)
             .bind(to: hourlyCollectionView.rx.items) { collectionView, row, item in
                 let indexPath = IndexPath(row: row, section: 0)
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HourCell", for: indexPath) as! HourlyCollectionViewCell
@@ -210,7 +217,6 @@ final class WeatherViewController: UIViewController {
                         return Array(zip(weatherResponses, iconImages))
                     }
             }
-            .observe(on: MainScheduler.instance)
             .bind(to: dailyCollectionView.rx.items) { collectionView, row, item in
                 let indexPath = IndexPath(row: row, section: 0)
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DailyCell", for: indexPath) as! DailyCollectionViewCell
@@ -229,12 +235,14 @@ final class WeatherViewController: UIViewController {
         
     }
     
+    
     private func updateLabels(with weatherResponse: WeatherResponse) {
         cityLabel.text = weatherResponse.name
         weatherDescriptionLabel.text = weatherResponse.weather.first?.description
         temperatureLabel.text = String(format:"%.2f",weatherResponse.main.temp) + "℃"
         humidityLabel.text = "humidity: "+String(format:"%.2f",weatherResponse.main.humidity) + "%"
     }
+    
 }
 
 @available(iOS 17.0, *)
