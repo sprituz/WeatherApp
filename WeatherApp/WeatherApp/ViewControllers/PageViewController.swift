@@ -104,17 +104,20 @@ final class PageViewController: UIPageViewController, UIPageViewControllerDataSo
         view.addSubview(pageControl)
         view.bringSubviewToFront(pageControl)
         
-        pageControl.addSubview(mapButton)
-        pageControl.addSubview(searchButton)
+        view.addSubview(mapButton)
+        view.addSubview(searchButton)
+        
+        view.bringSubviewToFront(mapButton)
+        view.bringSubviewToFront(searchButton)
         
         mapButton.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(40)
-            make.centerY.equalToSuperview()
+            make.centerY.equalTo(pageControl)
         }
         
         searchButton.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(40)
-            make.centerY.equalToSuperview()
+            make.centerY.equalTo(pageControl)
         }
         
         // 페이지 컨트롤로 페이지 변경
