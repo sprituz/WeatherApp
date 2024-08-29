@@ -7,8 +7,9 @@
 
 import UIKit
 import RxSwift
+import MapKit
 
-final class SearchViewModel {
+final class SearchViewModel: NSObject, ViewModelProtocol, MKLocalSearchCompleterDelegate {
     
     //from https://bulk.openweathermap.org/sample/
     lazy var cities: Observable<[Location]> =  CityService.shared.cities
