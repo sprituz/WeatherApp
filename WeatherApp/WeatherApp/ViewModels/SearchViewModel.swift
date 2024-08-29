@@ -7,41 +7,57 @@
 
 import UIKit
 import RxSwift
+import MapKit
 
-final class SearchViewModel {
+final class SearchViewModel: NSObject, ViewModelProtocol, MKLocalSearchCompleterDelegate {
     
-    //from https://bulk.openweathermap.org/sample/
-    lazy var cities: Observable<[Location]> =  CityService.shared.cities
+    override init() {
+        super.init()
+        searchCompleter.delegate = self
+    }
     
     private let apiService = APIService.shared
     private let userDefaultsService = UserDefaultsService.shared
     
+    private let searchResultsSubject = PublishSubject<[MKLocalSearchCompletion]>()
+    private let searchLocationResultSubject = PublishSubject<CLLocationCoordinate2D>()
+    
+    private let searchCompleter = MKLocalSearchCompleter()
+    private let disposeBag = DisposeBag()
+    
     struct Input {
-        let text: Observable<String>
+        let searchQuery: Observable<String>
+        let selectedLocation: Observable<MKLocalSearchCompletion>
         let deleteTrigger: Observable<(Coord, WeatherResponse)>
     }
     
     struct Output {
-        let data: Observable<[Location]>
-        let myLocation: Observable<[Coord]>
+        let searchResults: Observable<[MKLocalSearchCompletion]>
+        let coordinate: Observable<CLLocationCoordinate2D>
         let savedWeatherData: Observable<[(Coord, WeatherResponse)]>
     }
     
-    var disposeBag = DisposeBag()
-    
     func transform(input: Input) -> Output {
-        let data = input.text.flatMapLatest { text in
-            self.cities.map { location in
-                location.filter { $0.name.lowercased().contains(text.lowercased()) }
-            }
-        }
+        
+        
+        input.searchQuery
+            .subscribe(onNext: { query in
+                self.searchCompleter.queryFragment = query
+            })
+            .disposed(by: disposeBag)
+        
+        input.selectedLocation
+            .subscribe(onNext: { location in
+                self.searchLocation(location)
+            })
+            .disposed(by: disposeBag)
         
         input.deleteTrigger
-                   .subscribe(onNext: { (coord,weatherResponse) in
-                       self.userDefaultsService.deleteLocationData(coord)
-                       // UserDefaults에서 데이터를 다시 불러와 locations를 업데이트
-                   })
-                   .disposed(by: disposeBag)
+            .subscribe(onNext: { (coord,weatherResponse) in
+                self.userDefaultsService.deleteLocationData(coord)
+                // UserDefaults에서 데이터를 다시 불러와 locations를 업데이트
+            })
+            .disposed(by: disposeBag)
         
         let myLocation = userDefaultsService.locationData()
         
@@ -61,6 +77,36 @@ final class SearchViewModel {
                 .asObservable() // 최종적으로 Observable<[(Coord, WeatherData)]>를 반환합니다.
         }
         
-        return Output(data: data, myLocation: myLocation, savedWeatherData: savedWeatherData)
+        
+        
+        return Output(searchResults: searchResultsSubject, coordinate: searchLocationResultSubject, savedWeatherData: savedWeatherData)
     }
+    
+    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+        searchResultsSubject.onNext(completer.results)
+    }
+    
+    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
+        print("Error: \(error.localizedDescription)")
+    }
+    
+    func searchLocation(_ completion: MKLocalSearchCompletion) {
+        let searchRequest = MKLocalSearch.Request(completion: completion)
+        let search = MKLocalSearch(request: searchRequest)
+        
+        search.start { response, error in
+            guard let response = response, error == nil else {
+                print("Error occurred: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            
+            // 첫 번째 검색 결과의 좌표를 얻습니다.
+            if let mapItem = response.mapItems.first {
+                let coordinate = mapItem.placemark.coordinate
+                self.searchLocationResultSubject.onNext(coordinate)
+                print("Latitude: \(coordinate.latitude), Longitude: \(coordinate.longitude)")
+            }
+        }
+    }
+    
 }

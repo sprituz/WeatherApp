@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import CoreLocation
 
-final class WeatherViewModel {
+final class WeatherViewModel: ViewModelProtocol {
     
     private let apiService = APIService.shared
     private let locationService = LocationService.shared
@@ -50,7 +50,7 @@ final class WeatherViewModel {
             }
         
         input.addButtonTapped
-            .withLatestFrom(input.location) // 최신 위치 데이터를 가져옵니다.
+            .withLatestFrom(input.location) //홈화면에 추가할 위치 데이터를 가져옵니다.
             .subscribe(onNext: { [weak self] location in
                 self?.userDefaultsService.storeLocationData(location)
             })

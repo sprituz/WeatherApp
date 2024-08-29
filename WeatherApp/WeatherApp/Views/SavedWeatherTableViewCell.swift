@@ -17,44 +17,44 @@ class SavedWeatherTableViewCell: UITableViewCell {
         return label
     }()
     
-    private let weatherIconImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    
     private let weatherInfoLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = UIFont.systemFont(ofSize: 30)
         label.textColor = UIColor.darkGray
         label.numberOfLines = 0
         return label
     }()
     
+    private let weatherLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.numberOfLines = 0
+        return label
+    }()
+    
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         contentView.addSubview(locationLabel)
-        contentView.addSubview(weatherIconImageView)
         contentView.addSubview(weatherInfoLabel)
+        contentView.addSubview(weatherLabel)
         
         locationLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(8)
             make.leading.equalToSuperview().offset(16)
-            make.trailing.equalTo(weatherIconImageView.snp.leading).offset(-8)
-        }
-        
-        weatherIconImageView.snp.makeConstraints { make in
-            make.centerY.equalTo(locationLabel)
-            make.trailing.equalToSuperview().offset(-16)
-            make.width.height.equalTo(24)
+            make.trailing.lessThanOrEqualTo(weatherInfoLabel.snp.leading).offset(-30) // 이 조건을 추가하여 충돌 방지
         }
         
         weatherInfoLabel.snp.makeConstraints { make in
-            make.top.equalTo(locationLabel.snp.bottom).offset(8)
-            make.leading.equalToSuperview().offset(16)
-            make.trailing.equalToSuperview().offset(-16)
-            make.bottom.equalToSuperview().offset(-8)
+            make.top.equalToSuperview().offset(8)
+            make.trailing.equalToSuperview().inset(16)
+        }
+        
+        weatherLabel.snp.makeConstraints { make in
+            make.top.equalTo(weatherInfoLabel.snp.bottom).offset(8)
+            make.trailing.equalToSuperview().inset(16)
+            make.bottom.lessThanOrEqualToSuperview().inset(8) // 바닥에 닿지 않도록 설정
         }
     }
     
@@ -62,10 +62,9 @@ class SavedWeatherTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with weatherData: WeatherResponse, icon: UIImage?) {
+    func configure(with weatherData: WeatherResponse) {
         locationLabel.text = weatherData.name
         weatherInfoLabel.text = "\(weatherData.main.temp)°C"
-        weatherIconImageView.image = icon
+        weatherLabel.text = "\(weatherData.weather.first?.description ?? "")"
     }
 }
-

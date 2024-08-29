@@ -143,8 +143,8 @@ final class PageViewController: UIPageViewController, UIPageViewControllerDataSo
         
         mapButton.rx.tap
             .subscribe(onNext: { [weak self] _ in
-                let mapVC = MapViewController()
-                self?.navigationController?.pushViewController(mapVC, animated: true)
+                //let mapVC = MapViewController()
+                //self?.navigationController?.pushViewController(mapVC, animated: true)
             })
             .disposed(by: disposeBag)
         
