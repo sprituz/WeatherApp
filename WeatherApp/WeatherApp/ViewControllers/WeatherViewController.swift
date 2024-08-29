@@ -76,19 +76,6 @@ final class WeatherViewController: UIViewController {
     }
     
     
-//    override func viewDidLayoutSubviews() {
-//        super.viewDidLayoutSubviews()
-//        if let hourlyLayout = hourlyCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-//            hourlyLayout.itemSize = CGSize(width: hourlyCollectionView.frame.width/4, height: hourlyCollectionView.frame.height)
-//            hourlyLayout.invalidateLayout()
-//        }
-//        
-//        if let dailyLayout = dailyCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-//            dailyLayout.itemSize = CGSize(width: dailyCollectionView.frame.width, height: dailyCollectionView.frame.height/6)
-//            dailyLayout.invalidateLayout()
-//        }
-//    }
-    
     private func createLabel(fontSize: CGFloat, fontWeight: UIFont.Weight) -> UILabel {
         let label = UILabel()
         label.text = ""
