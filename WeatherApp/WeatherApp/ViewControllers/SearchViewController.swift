@@ -9,14 +9,18 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import MapKit
 
 final class SearchViewController: UIViewController {
     
     var text: String = ""
     
+    
+    let searchController = UISearchController(searchResultsController: nil)
+    
     lazy var savedWeatherTableView: UITableView = {
         let view = UITableView()
-        view.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        view.register(SavedWeatherTableViewCell.self, forCellReuseIdentifier: "cell")
         view.keyboardDismissMode = .onDrag
         view.backgroundColor = .white
         return view
@@ -46,6 +50,7 @@ final class SearchViewController: UIViewController {
         
         view.backgroundColor = .white
         title = "Weather"
+        navigationController?.navigationBar.prefersLargeTitles = true
         
         view.addSubview(savedWeatherTableView)
         view.addSubview(searchResultTableView)
@@ -64,15 +69,6 @@ final class SearchViewController: UIViewController {
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
         
-        searchResultTableView.rx.modelSelected(Location.self)
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] item in
-                let weatherViewController = WeatherViewController()
-                weatherViewController.location = item.coord
-                weatherViewController.shouldShowAddButton = true
-                self?.present(weatherViewController, animated: true)
-            })
-            .disposed(by: disposeBag)
         
         searchResultTableView.isHidden = true
         savedWeatherTableView.isHidden = false
@@ -87,15 +83,16 @@ final class SearchViewController: UIViewController {
     
     private func setupSearchController() {
         
-        let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.placeholder = "Enter city name"
         // 내비게이션 바는 항상 표출되도록 설정
         searchController.hidesNavigationBarDuringPresentation = false
-        /// 뒷배경이 흐려지지 않도록 설정
+        //검색할때 뒷배경 흐려지게
         searchController.obscuresBackgroundDuringPresentation = false
-        //타임아웃 해결
+        //맞춤법 수정 끄기
         searchController.searchBar.autocorrectionType = .no
         searchController.searchBar.spellCheckingType = .no
+        
+        searchController.searchBar.barTintColor = .gray
         
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -108,35 +105,17 @@ final class SearchViewController: UIViewController {
         let searchTextObservable = searchController?.searchBar.rx.text.orEmpty.asObservable() ?? .empty()
         let deleteTrigger = savedWeatherTableView.rx.modelDeleted((Coord,WeatherResponse).self).asObservable()
         
-        let input = SearchViewModel.Input(text:searchTextObservable ,deleteTrigger: deleteTrigger)
         
+        let selectedLocationObservable = searchResultTableView.rx.modelSelected(MKLocalSearchCompletion.self).asObservable()
+        
+        //검색 활성화시의 observable
+        let searchActiveObservable = searchController?.rx.isActive
+        
+        let input = SearchViewModel.Input(searchQuery: searchTextObservable, selectedLocation: selectedLocationObservable, deleteTrigger: deleteTrigger)
         let output = viewModel.transform(input: input)
         
-        // ViewModel의 output을 tableView에 바인드
-        output.data
-            .observe(on: MainScheduler.instance)
-            .bind(to: searchResultTableView.rx.items(cellIdentifier: "cell")) { (index, element: Location, cell) in
-                cell.textLabel?.text = element.name + ", " + element.country
-                cell.backgroundColor = .white
-                cell.textLabel?.textColor = .black
-                cell.selectionStyle = .none
-            }
-            .disposed(by: disposeBag)
-        
-        output.savedWeatherData
-            .observe(on: MainScheduler.instance)
-            .bind(to: savedWeatherTableView.rx.items(cellIdentifier: "cell")) { (index, element: (Coord, WeatherResponse), cell) in
-                if let cityName = element.1.name {
-                            cell.textLabel?.text = cityName
-                        }
-                cell.backgroundColor = .white
-                cell.textLabel?.textColor = .black
-                cell.selectionStyle = .none
-            }
-            .disposed(by: disposeBag)
         
         searchController?.searchBar.rx.text.orEmpty
-            .distinctUntilChanged() // 연속된 중복 값을 필터링
             .subscribe(onNext: { [unowned self] query in
                 if query.isEmpty {
                     // 검색창이 비어 있을 때
@@ -149,7 +128,38 @@ final class SearchViewController: UIViewController {
                 }
             })
             .disposed(by: disposeBag)
-
+        
+        
+        
+        output.savedWeatherData
+            .observe(on: MainScheduler.instance)
+            .bind(to: savedWeatherTableView.rx.items(cellIdentifier: "cell", cellType: SavedWeatherTableViewCell.self)) { (index, element: (Coord, WeatherResponse), cell) in
+                cell.configure(with: element.1)
+                cell.backgroundColor = .white
+                cell.textLabel?.textColor = .black
+                cell.selectionStyle = .none
+            }
+            .disposed(by: disposeBag)
+        
+        output.searchResults
+            .observe(on: MainScheduler.instance)
+            .bind(to: searchResultTableView.rx.items(cellIdentifier: "cell")) { row, completion, cell in
+                cell.textLabel?.text = completion.title
+                cell.detailTextLabel?.text = completion.subtitle
+            }
+            .disposed(by: disposeBag)
+        
+        output.coordinate
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] item in
+                let weatherViewController = WeatherViewController()
+                weatherViewController.location = Coord(lon: item.longitude, lat: item.latitude)
+                weatherViewController.shouldShowAddButton = true
+                self?.present(weatherViewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        
     }
 }
 
