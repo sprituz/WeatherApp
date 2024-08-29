@@ -54,7 +54,6 @@
 		9BDFE6142B6B77D700415A59 /* PageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BDFE6132B6B77D700415A59 /* PageViewController.swift */; };
 		9BDFE63C2B70BD7A00415A59 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BDFE63B2B70BD7A00415A59 /* SearchViewModel.swift */; };
 		9BDFE6402B7B06E900415A59 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BDFE63F2B7B06E900415A59 /* Location.swift */; };
-		9BF242502BE49E3A0094FFF7 /* WorldCoordinates.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9BF2424F2BE49E3A0094FFF7 /* WorldCoordinates.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -134,7 +133,6 @@
 		9BDFE6132B6B77D700415A59 /* PageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
 		9BDFE63B2B70BD7A00415A59 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		9BDFE63F2B7B06E900415A59 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
-		9BF2424F2BE49E3A0094FFF7 /* WorldCoordinates.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = WorldCoordinates.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -215,7 +213,6 @@
 				9B93118929794AA50015F84E /* ViewControllers */,
 				9B931165297946700015F84E /* Info.plist */,
 				9B9311AA2981244F0015F84E /* WeatherInfo.plist */,
-				9BF2424F2BE49E3A0094FFF7 /* WorldCoordinates.plist */,
 				9B9311AC298124EA0015F84E /* WeatherApp++Bundle.swift */,
 			);
 			path = WeatherApp;
@@ -496,7 +493,6 @@
 			files = (
 				9B931164297946700015F84E /* LaunchScreen.storyboard in Resources */,
 				9B931161297946700015F84E /* Assets.xcassets in Resources */,
-				9BF242502BE49E3A0094FFF7 /* WorldCoordinates.plist in Resources */,
 				9B9311AB2981244F0015F84E /* WeatherInfo.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
