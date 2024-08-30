@@ -22,7 +22,7 @@ final class SearchViewController: UIViewController {
         let view = UITableView()
         view.register(SavedWeatherTableViewCell.self, forCellReuseIdentifier: "cell")
         view.keyboardDismissMode = .onDrag
-        view.backgroundColor = .white
+        view.backgroundColor = .black
         return view
     }()
     
@@ -30,7 +30,7 @@ final class SearchViewController: UIViewController {
         let view = UITableView()
         view.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         view.keyboardDismissMode = .onDrag
-        view.backgroundColor = .white
+        view.backgroundColor = .black
         return view
     }()
     
@@ -48,9 +48,13 @@ final class SearchViewController: UIViewController {
     
     private func configureUI() {
         
-        view.backgroundColor = .white
+        view.backgroundColor = .black
         title = "Weather"
+        
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.barTintColor = .black
+        navigationController?.navigationBar.tintColor = .gray
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
         
         view.addSubview(savedWeatherTableView)
         view.addSubview(searchResultTableView)
@@ -135,8 +139,7 @@ final class SearchViewController: UIViewController {
             .observe(on: MainScheduler.instance)
             .bind(to: savedWeatherTableView.rx.items(cellIdentifier: "cell", cellType: SavedWeatherTableViewCell.self)) { (index, element: (Coord, WeatherResponse), cell) in
                 cell.configure(with: element.1)
-                cell.backgroundColor = .white
-                cell.textLabel?.textColor = .black
+                cell.backgroundColor = .black
                 cell.selectionStyle = .none
             }
             .disposed(by: disposeBag)
@@ -146,6 +149,7 @@ final class SearchViewController: UIViewController {
             .bind(to: searchResultTableView.rx.items(cellIdentifier: "cell")) { row, completion, cell in
                 cell.textLabel?.text = completion.title
                 cell.detailTextLabel?.text = completion.subtitle
+                cell.backgroundColor = .black
             }
             .disposed(by: disposeBag)
         
