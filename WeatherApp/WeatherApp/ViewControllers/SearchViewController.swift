@@ -23,6 +23,7 @@ final class SearchViewController: UIViewController {
         view.register(SavedWeatherTableViewCell.self, forCellReuseIdentifier: "cell")
         view.keyboardDismissMode = .onDrag
         view.backgroundColor = .black
+        view.separatorColor = .white
         return view
     }()
     
@@ -31,6 +32,7 @@ final class SearchViewController: UIViewController {
         view.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         view.keyboardDismissMode = .onDrag
         view.backgroundColor = .black
+        view.separatorColor = .white
         return view
     }()
     
@@ -54,7 +56,9 @@ final class SearchViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.barTintColor = .black
         navigationController?.navigationBar.tintColor = .gray
-        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+        //navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+        // 큰 타이틀 텍스트 색상 설정
+        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         
         view.addSubview(savedWeatherTableView)
         view.addSubview(searchResultTableView)
@@ -96,7 +100,19 @@ final class SearchViewController: UIViewController {
         searchController.searchBar.autocorrectionType = .no
         searchController.searchBar.spellCheckingType = .no
         
-        searchController.searchBar.barTintColor = .gray
+        
+        searchController.searchBar.barTintColor = .lightGray
+        searchController.searchBar.tintColor = .white
+        
+        
+        if let textField = searchController.searchBar.value(forKey: "searchField") as? UITextField {
+            textField.backgroundColor = .lightGray
+            
+            if let placeholderLabel = textField.value(forKey: "placeholderLabel") as? UILabel {
+                placeholderLabel.textColor = UIColor(white: 1.0, alpha: 0.6) // 약간 투명한 흰색
+            }
+        }
+        
         
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -111,9 +127,6 @@ final class SearchViewController: UIViewController {
         
         
         let selectedLocationObservable = searchResultTableView.rx.modelSelected(MKLocalSearchCompletion.self).asObservable()
-        
-        //검색 활성화시의 observable
-        let searchActiveObservable = searchController?.rx.isActive
         
         let input = SearchViewModel.Input(searchQuery: searchTextObservable, selectedLocation: selectedLocationObservable, deleteTrigger: deleteTrigger)
         let output = viewModel.transform(input: input)
@@ -148,8 +161,8 @@ final class SearchViewController: UIViewController {
             .observe(on: MainScheduler.instance)
             .bind(to: searchResultTableView.rx.items(cellIdentifier: "cell")) { row, completion, cell in
                 cell.textLabel?.text = completion.title
-                cell.detailTextLabel?.text = completion.subtitle
                 cell.backgroundColor = .black
+                cell.textLabel?.textColor = .white
             }
             .disposed(by: disposeBag)
         
