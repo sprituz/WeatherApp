@@ -30,6 +30,7 @@
 		9B9311AD298124EA0015F84E /* WeatherApp++Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B9311AC298124EA0015F84E /* WeatherApp++Bundle.swift */; };
 		9B9311B52987A15C0015F84E /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B9311B42987A15C0015F84E /* LocationService.swift */; };
 		9BA0F0BA2C7EF31A00B1FA47 /* ViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BA0F0B92C7EF31A00B1FA47 /* ViewModelProtocol.swift */; };
+		9BA0F0BB2C82E5EA00B1FA47 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9BBF57682BAD0E3000CFB1F9 /* Assets.xcassets */; };
 		9BA458942B6B18E100F8965C /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BA458932B6B18E100F8965C /* SearchViewController.swift */; };
 		9BBF57542B99A76300CFB1F9 /* UserDefaultsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBF57532B99A76300CFB1F9 /* UserDefaultsService.swift */; };
 		9BBF575C2BAD0E2F00CFB1F9 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BBF575B2BAD0E2F00CFB1F9 /* WidgetKit.framework */; };
@@ -493,6 +494,7 @@
 			files = (
 				9B931164297946700015F84E /* LaunchScreen.storyboard in Resources */,
 				9B931161297946700015F84E /* Assets.xcassets in Resources */,
+				9BA0F0BB2C82E5EA00B1FA47 /* Assets.xcassets in Resources */,
 				9B9311AB2981244F0015F84E /* WeatherInfo.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -619,6 +621,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -680,6 +684,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
