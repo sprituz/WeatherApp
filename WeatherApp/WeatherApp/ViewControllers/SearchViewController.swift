@@ -56,7 +56,6 @@ final class SearchViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.barTintColor = .black
         navigationController?.navigationBar.tintColor = .gray
-        //navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
         // 큰 타이틀 텍스트 색상 설정
         navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         

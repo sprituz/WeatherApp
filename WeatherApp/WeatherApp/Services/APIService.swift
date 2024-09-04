@@ -69,21 +69,20 @@ final class APIService {
     }
     
     
-    private func performRequest<T: Decodable>(url: URL) -> Observable<T> {
-        return Observable.create { observer in
+    private func performRequest<T: Decodable>(url: URL) -> Single<T> {
+        return Single.create { single in
             let request = AF.request(url).response { response in
                 switch response.result {
                 case .success(let data):
                     do {
                         let model = try JSONDecoder().decode(T.self, from: data ?? Data())
-                        observer.onNext(model)
+                        single(.success(model))
                     } catch {
-                        observer.onError(error)
+                        single(.failure(error))
                     }
                 case .failure(let error):
-                    observer.onError(error)
+                    single(.failure(error))
                 }
-                observer.onCompleted()
             }
             return Disposables.create {
                 request.cancel()
@@ -91,17 +90,16 @@ final class APIService {
         }
     }
     
-    private func performRequestImage(url: URL) -> Observable<UIImage> {
-        return Observable.create { observer in
+    private func performRequestImage(url: URL) -> Single<UIImage> {
+        return Single.create { single in
             let request = AF.request(url).response { response in
                 switch response.result {
                 case .success(let data):
                     let icon = UIImage(data: data ?? Data())
-                    observer.onNext(icon ?? UIImage())
+                    single(.success(icon ?? UIImage()))
                 case .failure(let error):
-                    observer.onError(error)
+                    single(.failure(error))
                 }
-                observer.onCompleted()
             }
             return Disposables.create {
                 request.cancel()
@@ -109,30 +107,30 @@ final class APIService {
         }
     }
     
-    func getWeather(lat: Double, lon: Double) -> Observable<WeatherResponse> {
+    func getWeather(lat: Double, lon: Double) -> Single<WeatherResponse> {
         guard let url = WeatherServiceEndpoint.byCoordinates(lat, lon).url(appid: self.appid) else {
-            return Observable.error(NetworkError.invalidURL)
+            return Single.error(NetworkError.invalidURL)
         }
         return performRequest(url: url)
     }
     
-    func getWeatherIcon(icon: String) -> Observable<UIImage> {
+    func getWeatherIcon(icon: String) -> Single<UIImage> {
         guard let url = WeatherServiceEndpoint.weatherIcon(icon).url(appid: self.appid) else {
-            return Observable.error(NetworkError.invalidURL)
+            return Single.error(NetworkError.invalidURL)
         }
         return performRequestImage(url: url)
     }
     
-    func getDailyWeather(lat: Double, lon: Double) -> Observable<ResponseList> {
+    func getDailyWeather(lat: Double, lon: Double) -> Single<ResponseList> {
         guard let url = WeatherServiceEndpoint.dailyForecast(lat, lon).url(appid: self.appid) else {
-            return Observable.error(NetworkError.invalidURL)
+            return Single.error(NetworkError.invalidURL)
         }
         return performRequest(url: url)
     }
     
-    func getHourlyWeather(lat: Double, lon: Double) -> Observable<ResponseList> {
+    func getHourlyWeather(lat: Double, lon: Double) -> Single<ResponseList> {
         guard let url = WeatherServiceEndpoint.hourlyForecast(lat, lon).url(appid: self.appid) else {
-            return Observable.error(NetworkError.invalidURL)
+            return Single.error(NetworkError.invalidURL)
         }
         return performRequest(url: url)
     }

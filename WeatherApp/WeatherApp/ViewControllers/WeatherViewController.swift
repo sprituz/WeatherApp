@@ -167,12 +167,16 @@ final class WeatherViewController: UIViewController {
         
         let output = viewModel.transform(input: input)
         
-        output.data.observe(on: MainScheduler.instance)
+        output
+            .data
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] weatherResponse in
                 self?.updateLabels(with: weatherResponse)
             }).disposed(by: disposeBag)
         
-        output.icon.observe(on: MainScheduler.instance)
+        output
+            .icon
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] image in
                 self?.weatherIcon.image = image
             }).disposed(by: disposeBag)

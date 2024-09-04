@@ -42,10 +42,10 @@ final class WeatherViewModel: ViewModelProtocol {
                     return self.locationService.location
                         .flatMapLatest { currentLocation -> Observable<WeatherResponse> in
                             guard let currentLocation = currentLocation else { return Observable.empty() }
-                            return self.apiService.getWeather(lat: currentLocation.coordinate.latitude, lon: currentLocation.coordinate.longitude)
+                            return self.apiService.getWeather(lat: currentLocation.coordinate.latitude, lon: currentLocation.coordinate.longitude).asObservable()
                         }
                 } else {
-                    return self.apiService.getWeather(lat: location.lat!, lon: location.lon!)
+                    return self.apiService.getWeather(lat: location.lat!, lon: location.lon!).asObservable()
                 }
             }
         
@@ -61,7 +61,7 @@ final class WeatherViewModel: ViewModelProtocol {
                 guard let self = self else { return Observable.empty() }
                 
                 let weatherIcon = response.weather.first?.icon ?? ""
-                return self.apiService.getWeatherIcon(icon: weatherIcon)
+                return self.apiService.getWeatherIcon(icon: weatherIcon).asObservable()
             }
         
         
@@ -74,10 +74,10 @@ final class WeatherViewModel: ViewModelProtocol {
                     observable = self.locationService.location
                         .flatMapLatest { currentLocation -> Observable<ResponseList> in
                             guard let currentLocation = currentLocation else { return Observable.empty() }
-                            return self.apiService.getDailyWeather(lat: currentLocation.coordinate.latitude, lon: currentLocation.coordinate.longitude)
+                            return self.apiService.getDailyWeather(lat: currentLocation.coordinate.latitude, lon: currentLocation.coordinate.longitude).asObservable()
                         }
                 } else {
-                    observable = self.apiService.getDailyWeather(lat: location.lat!, lon: location.lon!)
+                    observable = self.apiService.getDailyWeather(lat: location.lat ?? 0, lon: location.lon ?? 0).asObservable()
                 }
                 
                 return observable
@@ -99,7 +99,7 @@ final class WeatherViewModel: ViewModelProtocol {
             .flatMap { dataList -> Observable<[UIImage]> in
                 let iconObservables = dataList.map { weatherResponse -> Observable<UIImage> in
                     let icon = weatherResponse.weather.first?.icon ?? ""
-                    return self.apiService.getWeatherIcon(icon: icon)
+                    return self.apiService.getWeatherIcon(icon: icon).asObservable()
                 }
                 return Observable.combineLatest(iconObservables)
             }
@@ -114,10 +114,10 @@ final class WeatherViewModel: ViewModelProtocol {
                     return self.locationService.location
                         .flatMapLatest { currentLocation -> Observable<ResponseList> in
                             guard let currentLocation = currentLocation else { return Observable.empty() }
-                            return self.apiService.getHourlyWeather(lat: currentLocation.coordinate.latitude, lon: currentLocation.coordinate.longitude)
+                            return self.apiService.getHourlyWeather(lat: currentLocation.coordinate.latitude, lon: currentLocation.coordinate.longitude).asObservable()
                         }
                 } else {
-                    return self.apiService.getHourlyWeather(lat: location.lat!, lon: location.lon!)
+                    return self.apiService.getHourlyWeather(lat: location.lat ?? 0, lon: location.lon ?? 0).asObservable()
                 }
             }
         
@@ -125,7 +125,7 @@ final class WeatherViewModel: ViewModelProtocol {
             .flatMap { responseList -> Observable<[UIImage]> in
                 let iconObservables = responseList.list.map { weatherResponse -> Observable<UIImage> in
                     let icon = weatherResponse.weather.first?.icon ?? ""
-                    return self.apiService.getWeatherIcon(icon: icon)
+                    return self.apiService.getWeatherIcon(icon: icon).asObservable()
                 }
                 return Observable.combineLatest(iconObservables)
             }
