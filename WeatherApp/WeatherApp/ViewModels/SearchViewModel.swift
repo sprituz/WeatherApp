@@ -100,7 +100,6 @@ final class SearchViewModel: NSObject, ViewModelProtocol, MKLocalSearchCompleter
                 return
             }
             
-            // 첫 번째 검색 결과의 좌표를 얻습니다.
             if let mapItem = response.mapItems.first {
                 let coordinate = mapItem.placemark.coordinate
                 self.searchLocationResultSubject.onNext(coordinate)
@@ -108,5 +107,4 @@ final class SearchViewModel: NSObject, ViewModelProtocol, MKLocalSearchCompleter
             }
         }
     }
-    
 }

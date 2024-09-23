@@ -218,7 +218,8 @@ final class WeatherViewController: UIViewController {
             .disposed(by: disposeBag)
         
         // 위치 UserDefaults에 있으면 추가버튼 숨기기
-        output.shouldShowAddButton.observe(on: MainScheduler.instance)
+        output.shouldShowAddButton
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] shouldShow in
                 self?.addButton.isHidden = !shouldShow
             })

@@ -128,19 +128,20 @@ final class SearchViewController: UIViewController {
         let selectedLocationObservable = searchResultTableView.rx.modelSelected(MKLocalSearchCompletion.self).asObservable()
         
         let input = SearchViewModel.Input(searchQuery: searchTextObservable, selectedLocation: selectedLocationObservable, deleteTrigger: deleteTrigger)
+        
         let output = viewModel.transform(input: input)
         
         
         searchController?.searchBar.rx.text.orEmpty
-            .subscribe(onNext: { [unowned self] query in
+            .subscribe(onNext: { [weak self] query in
                 if query.isEmpty {
                     // 검색창이 비어 있을 때
-                    self.searchResultTableView.isHidden = true
-                    self.savedWeatherTableView.isHidden = false
+                    self?.searchResultTableView.isHidden = true
+                    self?.savedWeatherTableView.isHidden = false
                 } else {
                     // 검색창에 텍스트가 있을 때
-                    self.searchResultTableView.isHidden = false
-                    self.savedWeatherTableView.isHidden = true
+                    self?.searchResultTableView.isHidden = false
+                    self?.savedWeatherTableView.isHidden = true
                 }
             })
             .disposed(by: disposeBag)
